@@ -1,0 +1,17 @@
+<!-- views/bookDetails.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Book Details</title>
+</head>
+<body>
+    <h2><%= book.title %></h2>
+    <p><strong>Author:</strong> <%= book.author %></p>
+    <p><%= book.description %></p>
+    
+    <h3>Read the Book:</h3>
+    <p><%= book.content %></p>
+
+    <a href="/home">Back to Home</a>
+</body>
+</html>

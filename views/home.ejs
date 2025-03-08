@@ -1,0 +1,26 @@
+<!-- views/home.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Bookstore</title>
+</head>
+<body>
+    <h2>Welcome to Online Bookstore</h2>
+    
+    <!-- Search Bar -->
+    <form action="/search" method="GET">
+        <input type="text" name="query" placeholder="Search books..." required>
+        <button type="submit">Search</button>
+    </form>
+
+    <!-- List of Books -->
+    <ul>
+        <% books.forEach(book => { %>
+            <li>
+                <a href="/books/<%= book._id %>"><%= book.title %> by <%= book.author %></a>
+            </li>
+        <% }) %>
+    </ul>
+
+</body>
+</html>
