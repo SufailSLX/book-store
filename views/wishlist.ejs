@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Wishlist</title>
+    <link rel="stylesheet" href="/css/wishlist.css">
+</head>
+<body>
+
+    <nav>
+        <h2>Book Cloud</h2>
+        <ul>
+            <li><a href="/api/auth/dashboard">Home</a></li>
+            <li><a href="/api/wishlist" class="active">Wishlist</a></li>
+        </ul>
+    </nav>
+
+    <h2>Your Wishlist</h2>
+
+    <div id="wishlist-container">
+        <% if (wishlistBooks.length === 0) { %>
+            <p>No books in wishlist yet.</p>
+        <% } else { %>
+            <% wishlistBooks.forEach(book => { %>
+                <div class="book-card">
+                    <img src="<%= book.image || '/assets/default-book.png' %>" alt="Book Cover">
+                    <div>
+                        <h3><%= book.title %></h3>
+                        <p><%= book.author %></p>
+                        <button class="remove-wishlist" data-id="<%= book._id %>">Remove</button>
+                    </div>
+                </div>
+            <% }); %>
+        <% } %>
+    </div>
+
+    <script src="/js/wishlist.js"></script>
+
+</body>
+</html>

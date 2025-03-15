@@ -1,8 +1,14 @@
+
 // const jwt = require('jsonwebtoken');
 // require('dotenv').config();
 
 // const verifyToken = (req, res, next) => {
-//     const token = req.headers.authorization?.split(" ")[1];
+//     let token = req.headers.authorization?.split(" ")[1]; // Extract token from Bearer header
+
+//     // ✅ Try to get token from cookies if not in headers
+//     if (!token && req.cookies) {
+//         token = req.cookies.token;
+//     }
 
 //     if (!token) {
 //         return res.status(401).json({ message: "Access Denied. No token provided." });
@@ -13,25 +19,42 @@
 //         req.user = decoded; // Attach user data to request
 //         next();
 //     } catch (error) {
+//         console.error("Token verification error:", error.message);
 //         res.status(403).json({ message: "Invalid token." });
 //     }
 // };
 
 // const ensureAuth = (req, res, next) => {
-//     if (!req.user) return res.redirect('/login'); // Redirect to login if not authenticated
+//     if (!req.user) {
+//         return res.redirect('/login'); // Redirect to login if not authenticated
+//     }
 //     next();
 // };
 
-// console.log("Exported Middleware Functions:", module.exports);  // Debugging
+// // ✅ New Middleware: Check if User is Admin
+// const isAdmin = (req, res, next) => {
+//     if (req.user?.role !== 'admin') {
+//         return res.status(403).json({ message: "Access Denied. Admins only." });
+//     }
+//     next();
+// };
 
-// module.exports = { verifyToken, ensureAuth }; // ✅ Ensure both are exported
+// // ✅ Export all middleware functions
+// module.exports = { verifyToken, ensureAuth, isAdmin };
 
-
+// // Debugging Log (Check if exports are correct)
+// console.log("Exported Middleware Functions:", module.exports);
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
+const dotenv = require('dotenv');
+dotenv.config();
 
 const verifyToken = (req, res, next) => {
-    const token = req.headers.authorization?.split(" ")[1];
+    let token = req.headers.authorization?.split(" ")[1]; // Extract token from Bearer header
+
+    // ✅ Try to get token from cookies if not in headers
+    if (!token && req.cookies) {
+        token = req.cookies.token;
+    }
 
     if (!token) {
         return res.status(401).json({ message: "Access Denied. No token provided." });
@@ -42,17 +65,28 @@ const verifyToken = (req, res, next) => {
         req.user = decoded; // Attach user data to request
         next();
     } catch (error) {
+        console.error("Token verification error:", error.message);
         res.status(403).json({ message: "Invalid token." });
     }
 };
 
 const ensureAuth = (req, res, next) => {
-    if (!req.user) return res.redirect('/login'); // Redirect to login if not authenticated
+    if (!req.user) {
+        return res.redirect('/login'); // Redirect to login if not authenticated
+    }
     next();
 };
 
-// ✅ Correct way to export both functions
-module.exports = { verifyToken, ensureAuth };
+// ✅ New Middleware: Check if User is Admin
+const isAdmin = (req, res, next) => {
+    if (req.user?.role !== 'admin') {
+        return res.status(403).json({ message: "Access Denied. Admins only." });
+    }
+    next();
+};
+
+// ✅ Export all middleware functions
+module.exports = { verifyToken, ensureAuth, isAdmin };
 
 // Debugging Log (Check if exports are correct)
 console.log("Exported Middleware Functions:", module.exports);

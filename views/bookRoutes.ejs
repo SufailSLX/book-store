@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Read <%= book.title %></title>
+    <link rel="stylesheet" href="/styles.css"> <!-- Include CSS -->
+</head>
+<body>
+    <div class="read-container">
+        <h1><%= book.title %></h1>
+        <h3>by <%= book.author %></h3>
+        <p><%= book.content %></p> <!-- Full Book Content -->
+        <a href="/dashboard" class="back-button">Back to Dashboard</a>
+    </div>
+</body>
+</html>

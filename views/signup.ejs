@@ -1,17 +1,162 @@
-<!-- views/signup.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signup</title>
+    <link rel="stylesheet" href="/css/signup.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <h2>Signup</h2>
-    <form action="/auth/signup" method="POST">
-        <input type="text" name="name" placeholder="Full Name" required>
-        <input type="email" name="email" placeholder="Email" required>
-        <input type="password" name="password" placeholder="Password" required>
-        <button type="submit">Signup</button>
-    </form>
-    <p>Already have an account? <a href="/login">Login</a></p>
+    <!-- Video Background -->
+    <video id="video-background" autoplay muted loop>
+        <source src="/assets/signupintro.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Preloader -->
+    <div id="preloader">
+        <h1>Book Cloud</h1>
+        <p>Loading your book store<span class="dots"></span></p>
+    </div>
+
+    <!-- Success/Error Pop-up -->
+    <div id="successPopup" class="popup">
+        <p id="popupMessage"></p>
+    </div>
+
+    <div class="container">
+        <!-- Left Side - Book Thought -->
+        <div class="left-side">
+            <h1>Turn Your Ideas into Reality</h1>
+            <p>Start your journey with Book Cloud today.</p>
+        </div>
+
+        <!-- Signup Form Right Side -->
+        <div class="right-side">
+            <h2>Signup</h2>
+            <form id="signupForm">
+                <input type="text" id="name" name="name" placeholder="Name" required>
+                <span id="nameError" class="error-message"></span><br>
+
+                <input type="email" id="email" name="email" placeholder="Email" required>
+                <span id="emailError" class="error-message"></span><br>
+
+                <input type="password" id="password" name="password" placeholder="Password" required>
+                <span id="passwordError" class="error-message"></span><br>
+
+                <select id="role" name="role">
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                </select><br>
+
+                <p class="or-divider">- OR -</p>
+
+                <div class="social-buttons">
+                    <button class="google-btn"><i class="fab fa-google"></i> Sign up with Google</button>
+                    <button class="facebook-btn"><i class="fab fa-facebook"></i> Sign up with Facebook</button>
+                </div>
+
+                <p>Already have an account? <a href="/login">Login</a></p>
+                <button type="submit" class="signup-btn">Signup</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Hide Preloader after 3 seconds
+        window.onload = function () {
+            setTimeout(function () {
+                document.getElementById("preloader").style.display = "none";
+            }, 3000);
+        };
+
+        // Clear error messages when typing
+        document.getElementById("name").addEventListener("input", function() {
+            document.getElementById("nameError").textContent = "";
+        });
+
+        document.getElementById("email").addEventListener("input", function() {
+            document.getElementById("emailError").textContent = "";
+        });
+
+        document.getElementById("password").addEventListener("input", function() {
+            document.getElementById("passwordError").textContent = "";
+        });
+
+        // Form Submission
+        document.getElementById("signupForm").addEventListener("submit", async function(event) {
+            event.preventDefault(); // Prevent page reload
+
+            let name = document.getElementById("name").value.trim();
+            let email = document.getElementById("email").value.trim();
+            let password = document.getElementById("password").value.trim();
+            let role = document.getElementById("role").value;
+
+            // Clear previous errors
+            document.getElementById("nameError").textContent = "";
+            document.getElementById("emailError").textContent = "";
+            document.getElementById("passwordError").textContent = "";
+
+            let isValid = true;
+
+            // Name Validation
+            if (name.length < 3) {
+                document.getElementById("nameError").textContent = "Name must be at least 3 characters.";
+                isValid = false;
+            }
+
+            // Email Validation (Basic Regex Check)
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailPattern.test(email)) {
+                document.getElementById("emailError").textContent = "Enter a valid email.";
+                isValid = false;
+            }
+
+            // Password Validation
+            if (password.length < 6) {
+                document.getElementById("passwordError").textContent = "Password must be at least 6 characters.";
+                isValid = false;
+            }
+
+            if (!isValid) return; // Stop submission if validation fails
+
+            // Send Data to Backend
+            let response = await fetch("/api/auth/signup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, email, password, role })
+            });
+
+            let data = await response.json();
+
+            if (!data.success) {
+                showPopup(data.message, "error"); // Show error pop-up
+            } else {
+                showPopup("Signup successful! Redirecting to login...", "success");
+
+                // Redirect after 2 seconds
+                setTimeout(() => {
+                    window.location.href = "/login";
+                }, 2000);
+            }
+        });
+
+        // Function to Show Pop-up
+        function showPopup(message, type) {
+            const popup = document.getElementById("successPopup");
+            const popupMessage = document.getElementById("popupMessage");
+
+            popupMessage.textContent = message;
+            popup.classList.add(type === "success" ? "popup-success" : "popup-error");
+            popup.style.display = "block";
+
+            // Hide popup after 3 seconds
+            setTimeout(() => {
+                popup.style.display = "none";
+                popup.classList.remove("popup-success", "popup-error");
+            }, 3000);
+        }
+    </script>
 </body>
 </html>

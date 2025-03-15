@@ -1,11 +1,11 @@
-// models/Book.js
 const mongoose = require('mongoose');
 
-const bookSchema = new mongoose.Schema({
+const BookSchema = new mongoose.Schema({
     title: { type: String, required: true },
     author: { type: String, required: true },
     description: { type: String },
-    content: { type: String, required: true } // Book content or PDF URL
-}, { timestamps: true });
+    content: { type: String, required: true },
+    image: { type: String } // ✅ Image field for book cover
+});
 
-module.exports = mongoose.model('Book', bookSchema);
+module.exports = mongoose.model('Book', BookSchema);

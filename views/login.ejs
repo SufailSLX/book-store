@@ -1,16 +1,61 @@
-<!-- views/login.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Turn Your Ideas into Reality</title>
+    <link rel="stylesheet" href="/css/login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h2>Login</h2>
-    <form action="/auth/login" method="POST">
-        <input type="email" name="email" placeholder="Email" required>
-        <input type="password" name="password" placeholder="Password" required>
-        <button type="submit">Login</button>
-    </form>
-    <p>Don't have an account? <a href="/signup">Sign up</a></p>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>Welcome Back!</h1>
+            <p>Start for free and get attractive offers from the community</p>
+        </div>
+
+        <!-- Display general error message if exists -->
+        <% if (typeof errorMessage !== "undefined" && errorMessage) { %>
+            <p class="error-message"><%= errorMessage %></p>
+        <% } %>
+
+        <form class="login-form" action="/api/auth/login" method="POST">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                <!-- Display email-specific error message -->
+                <% if (typeof emailError !== "undefined" && emailError) { %>
+                    <p id="email-error" class="field-error"><%= emailError %></p>
+                <% } %>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                <!-- Display password-specific error message -->
+                <% if (typeof passwordError !== "undefined" && passwordError) { %>
+                    <p id="password-error" class="field-error"><%= passwordError %></p>
+                <% } %>
+            </div>
+            <button type="submit" class="login-btn">Login</button>
+            <p class="signup-link">Don't have an account? <a href="/signup">Sign up</a></p>
+        </form>
+    </div>
+
+    <script>
+        // Function to hide error messages when typing in the input fields
+        document.getElementById('email').addEventListener('input', function() {
+            const emailError = document.getElementById('email-error');
+            if (emailError) {
+                emailError.style.display = 'none'; // Hide the email error message
+            }
+        });
+
+        document.getElementById('password').addEventListener('input', function() {
+            const passwordError = document.getElementById('password-error');
+            if (passwordError) {
+                passwordError.style.display = 'none'; // Hide the password error message
+            }
+        });
+    </script>
 </body>
 </html>
