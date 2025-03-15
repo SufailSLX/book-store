@@ -5,34 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Wishlist</title>
     <link rel="stylesheet" href="/css/wishlist.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <nav>
+    <!-- Navbar -->
+    <nav class="navbar">
         <h2>Book Cloud</h2>
-        <ul>
-            <li><a href="/api/auth/dashboard">Home</a></li>
-            <li><a href="/api/wishlist" class="active">Wishlist</a></li>
+        <ul class="nav-links">
+            <li>
+                <a href="/api/auth/dashboard">
+                    <i class="fas fa-home"></i> Home
+                </a>
+            </li>
+            <li>
+                <a href="/api/wishlist" class="active">
+                    <i class="fas fa-heart"></i> Wishlist
+                </a>
+            </li>
         </ul>
     </nav>
 
-    <h2>Your Wishlist</h2>
+    <!-- Wishlist Container -->
+    <div class="wishlist-container">
+        <h2>Your Wishlist</h2>
 
-    <div id="wishlist-container">
-        <% if (wishlistBooks.length === 0) { %>
-            <p>No books in wishlist yet.</p>
-        <% } else { %>
-            <% wishlistBooks.forEach(book => { %>
-                <div class="book-card">
-                    <img src="<%= book.image || '/assets/default-book.png' %>" alt="Book Cover">
-                    <div>
-                        <h3><%= book.title %></h3>
-                        <p><%= book.author %></p>
-                        <a href="/read/<%= book._id %>" class="read-btn">Click to Read</a>
-                        <button class="remove-wishlist" data-id="<%= book._id %>">Remove</button>
+        <div id="wishlist-books">
+            <% if (wishlistBooks.length === 0) { %>
+                <p class="empty-wishlist">No books in wishlist yet.</p>
+            <% } else { %>
+                <% wishlistBooks.forEach(book => { %>
+                    <div class="book-card">
+                        <img src="<%= book.image || '/assets/default-book.png' %>" alt="Book Cover" class="book-image">
+                        <div class="book-details">
+                            <h3 class="book-title"><%= book.title %></h3>
+                            <p class="book-author">by <%= book.author %></p>
+                            <div class="book-actions">
+                                <a href="/read/<%= book._id %>" class="read-btn">Click to Read</a>
+                                <button class="remove-wishlist" data-id="<%= book._id %>">
+                                    <i class="fas fa-trash"></i> Remove
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            <% }); %>
-        <% } %>
+                <% }); %>
+            <% } %>
+        </div>
     </div>
 
     <script src="/js/wishlist.js"></script>

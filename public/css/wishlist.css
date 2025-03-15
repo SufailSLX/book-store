@@ -1,4 +1,4 @@
-
+/* 
 * {
     margin: 0;
     padding: 0;
@@ -116,4 +116,192 @@ h2 {
 .no-books-message {
     font-size: 1.5rem;
     color: #888;
+} */
+
+
+/* General Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f9;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: #2575fc;
+    color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar h2 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.navbar .nav-links {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar .nav-links li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: opacity 0.3s ease;
+}
+
+.navbar .nav-links li a:hover {
+    opacity: 0.8;
+}
+
+.navbar .nav-links li a.active {
+    font-weight: 600;
+    border-bottom: 2px solid #fff;
+}
+
+/* Wishlist Container */
+.wishlist-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 1rem;
+}
+
+.wishlist-container h2 {
+    font-size: 2rem;
+    text-align: center;
+    color: #2575fc;
+    margin-bottom: 2rem;
+}
+
+/* Empty Wishlist Message */
+.empty-wishlist {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #666;
+}
+
+/* Book Card */
+.book-card {
+    display: flex;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.book-image {
+    width: 150px;
+    height: 200px;
+    object-fit: cover;
+    border-right: 1px solid #eee;
+}
+
+.book-details {
+    flex: 1;
+    padding: 1.5rem;
+}
+
+.book-title {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #2575fc;
+}
+
+.book-author {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.book-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.read-btn {
+    padding: 0.5rem 1rem;
+    background: #2575fc;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    transition: background 0.3s ease;
+}
+
+.read-btn:hover {
+    background: #1b5bbf;
+}
+
+.remove-wishlist {
+    padding: 0.5rem 1rem;
+    background: #ff6f61;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.remove-wishlist:hover {
+    background: #e65a50;
+}
+
+/* Navbar Icons */
+.navbar .nav-links li a i {
+    margin-right: 0.5rem; /* Space between icon and text */
+    font-size: 1rem; /* Icon size */
+}
+
+/* Active Link Icon */
+.navbar .nav-links li a.active i {
+    color: #fff; /* Ensure the icon matches the active link color */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .book-card {
+        flex-direction: column;
+    }
+
+    .book-image {
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid #eee;
+    }
+
+    .book-details {
+        padding: 1rem;
+    }
+
+    .book-title {
+        font-size: 1.2rem;
+    }
+
+    .book-author {
+        font-size: 0.9rem;
+    }
+
+    .book-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
 }
