@@ -4,11 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= book.title %></title>
+    <link rel="stylesheet" href="/css/read.css">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1><%= book.title %></h1>
-    <h3>by <%= book.author %></h3>
-    <p><%= book.content %></p>
-    <a href="/">Back</a>
+    <div class="reading-container">
+        <h1><%= book.title %></h1>
+        <h3>by <%= book.author %></h3>
+        <div class="content">
+            <p><%= book.content %></p>
+        </div>
+        <a href="/api/auth/dashboard" class="back-button">Back to Dashboard</a>
+    </div>
 </body>
 </html>

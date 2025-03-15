@@ -1,4 +1,5 @@
 const Wishlist = require("../models/Wishlist");
+const mongoose = require("mongoose");
 
 // ✅ Get Wishlist Books
 exports.getWishlist = async (req, res) => {
@@ -43,10 +44,37 @@ exports.addToWishlist = async (req, res) => {
 exports.removeFromWishlist = async (req, res) => {
     try {
         const { bookId } = req.params;
+
+        // Debugging: Log the bookId
+        console.log("Book ID to remove:", bookId);
+
+        // Ensure bookId is valid
+        if (!bookId) {
+            return res.status(400).json({ error: "Book ID is required" });
+        }
+
+        // Convert bookId to ObjectId using the `new` keyword
+        const objectId = new mongoose.Types.ObjectId(bookId);
+
+        // Find the user's wishlist
         let wishlist = await Wishlist.findOne({ userId: req.user.id });
 
+        // Debugging: Log the wishlist
+        console.log("Wishlist before removal:", wishlist);
+
         if (wishlist) {
-            wishlist.books = wishlist.books.filter(id => id.toString() !== bookId.toString());
+            // Filter out the bookId from the wishlist
+            wishlist.books = wishlist.books.filter(id => {
+                if (id && id.toString) {
+                    return id.toString() !== objectId.toString();
+                }
+                return false; // Skip invalid or null IDs
+            });
+
+            // Debugging: Log the updated wishlist
+            console.log("Wishlist after removal:", wishlist);
+
+            // Save the updated wishlist
             await wishlist.save();
         }
 

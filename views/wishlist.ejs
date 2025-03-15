@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="/css/wishlist.css">
 </head>
 <body>
-
     <nav>
         <h2>Book Cloud</h2>
         <ul>
@@ -28,6 +27,7 @@
                     <div>
                         <h3><%= book.title %></h3>
                         <p><%= book.author %></p>
+                        <a href="/read/<%= book._id %>" class="read-btn">Click to Read</a>
                         <button class="remove-wishlist" data-id="<%= book._id %>">Remove</button>
                     </div>
                 </div>
@@ -36,6 +36,5 @@
     </div>
 
     <script src="/js/wishlist.js"></script>
-
 </body>
 </html>

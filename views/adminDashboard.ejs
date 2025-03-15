@@ -5,38 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Manage Books</title>
     <link rel="stylesheet" href="/css/admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Navbar -->
     <nav class="navbar">
         <h2>Admin Panel</h2>
         <a href="/login" class="logout">Logout</a>
     </nav>
 
+    <!-- Main Container -->
     <div class="container">
-        <h2>Add a New Book</h2>
-        <form action="/api/auth/books/add" method="POST" enctype="multipart/form-data">
-            <input type="text" name="title" placeholder="Book Title" required>
-            <input type="text" name="author" placeholder="Author" required>
-            <textarea name="description" placeholder="Short Description"></textarea>
-            <textarea name="content" placeholder="Book Content" required></textarea>
-            <input type="file" name="image" accept="image/*"> <!-- ✅ File input for image -->
-            <button type="submit">Add Book</button>
-        </form>
+        <!-- Add Book Form -->
+        <div class="form-container">
+            <h2>Add a New Book</h2>
+            <form action="/api/auth/books/add" method="POST" enctype="multipart/form-data">
+                <input type="text" name="title" placeholder="Book Title" required>
+                <input type="text" name="author" placeholder="Author" required>
+                <textarea name="description" placeholder="Short Description"></textarea>
+                <textarea name="content" placeholder="Book Content" required></textarea>
+                <input type="file" name="image" accept="image/*">
+                <button type="submit" class="animated-button">Add Book</button>
+            </form>
+        </div>
 
-        <h3>Available Books</h3>
-        <ul>
-            <% books.forEach(book => { %>
-                <li>
-                    <strong><%= book.title %></strong> by <%= book.author %>
-                    <% if (book.image) { %>
-                        <img src="<%= book.image %>" alt="Book Cover" width="100">
-                    <% } %>
-                    <form action="/api/auth/books/delete/<%= book._id %>" method="POST">
-                        <button type="submit">Delete</button>
-                    </form>
-                </li>
-            <% }); %>
-        </ul>
+        <!-- Available Books List -->
+        <div class="books-list">
+            <h3>Available Books</h3>
+            <ul>
+                <% books.forEach(book => { %>
+                    <li class="book-item">
+                        <div class="book-details">
+                            <strong><%= book.title %></strong> by <%= book.author %>
+                            <% if (book.image) { %>
+                                <img src="<%= book.image %>" alt="Book Cover" class="book-image">
+                            <% } %>
+                        </div>
+                        <form action="/api/auth/books/delete/<%= book._id %>" method="POST">
+                            <button type="submit" class="animated-button delete-button">Delete</button>
+                        </form>
+                    </li>
+                <% }); %>
+            </ul>
+        </div>
     </div>
 </body>
 </html>
