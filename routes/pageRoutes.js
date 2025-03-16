@@ -3,7 +3,7 @@ const router = express.Router();
 const { ensureAuth } = require('../middleware/authMiddleware');  // ✅ Correct import
 
 // Signup Page (Public)
-router.get('/signup', (req, res) => {
+router.get('/', (req, res) => {
     res.render('signup');
 });
 
