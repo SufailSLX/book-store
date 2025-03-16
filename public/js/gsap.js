@@ -139,3 +139,54 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+
+// FOOTER 
+
+    // Wait for the DOM to load
+    document.addEventListener("DOMContentLoaded", function () {
+        // Animate the footer sections with a staggered effect
+        gsap.from(".footer-section", {
+            opacity: 0,
+            y: 50,
+            duration: 1,
+            stagger: 0.3, // Stagger the animation for each section
+            scrollTrigger: {
+                trigger: ".footer",
+                start: "top 80%", // Animation starts when the footer enters the viewport
+                end: "bottom 20%",
+                toggleActions: "play none none reverse", // Play animation on enter, reverse on leave
+            },
+        });
+
+        // Animate the footer bottom (copyright text)
+        gsap.from(".footer-bottom", {
+            opacity: 0,
+            y: 30,
+            duration: 1,
+            delay: 1, // Slight delay after the footer sections animate
+            scrollTrigger: {
+                trigger: ".footer",
+                start: "top 80%",
+                end: "bottom 20%",
+                toggleActions: "play none none reverse",
+            },
+        });
+
+        // Add hover animations for social media links
+        const socialLinks = document.querySelectorAll(".social-links a");
+        socialLinks.forEach((link) => {
+            link.addEventListener("mouseenter", () => {
+                gsap.to(link, {
+                    scale: 1.2,
+                    duration: 0.3,
+                });
+            });
+
+            link.addEventListener("mouseleave", () => {
+                gsap.to(link, {
+                    scale: 1,
+                    duration: 0.3,
+                });
+            });
+        });
+    });

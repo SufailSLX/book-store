@@ -236,6 +236,7 @@ body {
     transform: translateY(20px);
 }
 
+
 /* Search Container */
 .search-container {
     display: flex;
@@ -458,8 +459,8 @@ body {
 
 .toast {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+     top: 90px;
+    left: 45%;
     background: #4CAF50;
     color: white;
     padding: 12px 20px;
