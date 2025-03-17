@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+    
     <title>Dashboard</title>
     <link rel="stylesheet" href="/css/dashboard.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,11 +34,14 @@
             <a href="/api/wishlist" class="wishlist-icon">
                 <span class="material-symbols-outlined">favorite</span>
             </a>
-            <button class="logout-btn">
-                <span class="material-symbols-outlined">logout</span>
-            </button>
+            <span id="logoutButton"  class="material-symbols-outlined">Logout</span>
+            
         </div>
     </nav>
+    <!-- <button class="logout-btn">
+        <span class="material-symbols-outlined">logout</span>
+    </button> -->
+    <!-- <button id="logoutButton">Logout</button> -->
     
     <div class="line"></div>
     <!-------------------------------------------------------------------------->
@@ -274,8 +281,43 @@
             }, 3000);
         }
 
-        document.querySelector(".logout-btn").addEventListener("click", () => {
-            window.location.href = "/login";
+           // Logout button functionality
+           document.getElementById('logoutButton').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/auth/logout', {
+                    method: 'GET',
+                    credentials: 'include' // Include cookies
+                });
+
+                if (response.ok) {
+                    window.location.href = '/login'; // Redirect to login page
+                } else {
+                    console.error('Logout failed');
+                }
+            } catch (error) {
+                console.error('Error during logout:', error);
+            }
+        });
+
+        // Prevent back button after logout
+        if (window.history && window.history.pushState) {
+            window.history.pushState(null, null, '/api/auth/dashboard');
+            window.addEventListener('popstate', function () {
+                window.history.pushState(null, null, '/api/auth/dashboard');
+            });
+        }
+
+         // Prevent caching of the dashboard page
+         window.onpageshow = function(event) {
+            if (event.persisted) {
+                window.location.reload(); // Reload the page if it was restored from the cache
+            }
+        };
+
+        // Prevent back-button navigation to login page
+        history.pushState(null, document.title, location.href);
+        window.addEventListener('popstate', function(event) {
+            history.pushState(null, document.title, location.href);
         });
 
         renderBooks();

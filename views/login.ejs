@@ -3,9 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Login - Turn Your Ideas into Reality</title>
     <link rel="stylesheet" href="/css/login.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
 </head>
 <body>
     <div class="login-container">
@@ -56,6 +60,14 @@
                 passwordError.style.display = 'none'; // Hide the password error message
             }
         });
+       // Prevent back button after logout
+       if (window.history && window.history.pushState) {
+            window.history.pushState(null, null, '/login');
+            window.addEventListener('popstate', function () {
+                window.history.pushState(null, null, '/login');
+            });
+        }
+
     </script>
 </body>
 </html>
