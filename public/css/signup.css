@@ -206,8 +206,8 @@ body {
 /* Pop-up Styles */
 .popup {
   position: fixed;
-  top: 20px;
-  right: 20px;
+  top: 50px;
+  left: 50px;
   padding: 0.8rem; /* Reduced padding */
   border-radius: 5px;
   color: #fff;

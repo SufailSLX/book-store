@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
     <title>Signup</title>
     <link rel="stylesheet" href="/css/signup.css">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
@@ -10,7 +13,8 @@
 <body>
     <!-- Video Background -->
     <video id="video-background" autoplay muted loop>
-        <source src="/assets/signupintro.mp4" type="video/mp4">
+        <!-- <source src="/assets/signupintro.mp4" type="video/mp4"> -->
+        <source src="/assets/signup.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
 
@@ -53,8 +57,14 @@
                 <p class="or-divider">- OR -</p>
 
                 <div class="social-buttons">
-                    <button class="google-btn"><i class="fab fa-google"></i> Sign up with Google</button>
-                    <button class="facebook-btn"><i class="fab fa-facebook"></i> Sign up with Facebook</button>
+                    <a href="/api/auth/google">
+                        <i class="fab fa-google"></i> Sign up with Google
+                    </a>
+            
+                    <!-- <button class="google-btn"><i class="fab fa-google"></i> Sign up with Google</button> -->
+                    <!-- <a href="/api/auth/google" class="google-btn"><i class="fab fa-google"></i> Sign up with Google</a> -->
+
+                    <!-- <button class="facebook-btn"><i class="fab fa-facebook"></i> Sign up with Facebook</button> -->
                 </div>
 
                 <p>Already have an account? <a href="/login">Login</a></p>

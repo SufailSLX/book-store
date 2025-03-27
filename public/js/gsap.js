@@ -190,3 +190,27 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
     });
+
+
+    // NAVBAR 
+
+    // GSAP Animations for Initial Load
+gsap.from(".navbar h2", { duration: 1, x: -100, opacity: 0, ease: "power2.out" });
+gsap.from(".nav-links", { duration: 1, y: -50, opacity: 0, delay: 0.5, ease: "power2.out" });
+gsap.from(".nav-icons", { duration: 1, x: 100, opacity: 0, delay: 1, ease: "power2.out" });
+
+// Mobile Toggle Functionality
+const hamburger = document.querySelector(".hamburger");
+const navLinks = document.querySelector(".nav-links");
+const navIcons = document.querySelector(".nav-icons");
+
+hamburger.addEventListener("click", () => {
+    navLinks.classList.toggle("active");
+    navIcons.classList.toggle("active");
+
+    // GSAP Animations for Mobile Menu
+    if (navLinks.classList.contains("active")) {
+        gsap.from(".nav-links", { duration: 0.5, y: -50, opacity: 0, ease: "power2.out" });
+        gsap.from(".nav-icons", { duration: 0.5, y: -50, opacity: 0, delay: 0.2, ease: "power2.out" });
+    }
+});
