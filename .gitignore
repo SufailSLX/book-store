@@ -1,3 +1,4 @@
 .qodo
 .env 
 .node_modules
+.createAdmin.js
