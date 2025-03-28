@@ -65,11 +65,46 @@ router.get(
 );
 
 // ✅ User Signup Route
+// router.post('/signup', ensureGuest, async (req, res) => {
+//     try {
+//         const { name, email, password, role } = req.body;
+
+//         if (!name || !email || !password || !role) {
+//             return res.status(400).json({ message: "All fields are required" });
+//         }
+
+//         const existingUser = await User.findOne({ email });
+//         if (existingUser) {
+//             return res.status(400).json({ message: "User already exists" });
+//         }
+
+//         const hashedPassword = await bcrypt.hash(password, 10);
+
+//         const newUser = new User({ name, email, password: hashedPassword, role });
+//         await newUser.save();
+
+//         const token = jwt.sign({ id: newUser._id, role: newUser.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+//         res.cookie("token", token, { httpOnly: true });
+//         req.session.user = newUser;
+
+//         return res.status(201).json({
+//             message: "User registered successfully",
+//             user: { id: newUser._id, name, email, role }
+//         });
+
+//     } catch (error) {
+//         console.error("❌ Signup error:", error.message);
+//         return res.status(500).json({ error: "Server error" });
+//     }
+// });
+
+// ✅ User Signup Route (Default Role: "user")
 router.post('/signup', ensureGuest, async (req, res) => {
     try {
-        const { name, email, password, role } = req.body;
+        const { name, email, password } = req.body;
 
-        if (!name || !email || !password || !role) {
+        if (!name || !email || !password) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
@@ -79,25 +114,63 @@ router.post('/signup', ensureGuest, async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = new User({ name, email, password: hashedPassword, role: "user" });
 
-        const newUser = new User({ name, email, password: hashedPassword, role });
         await newUser.save();
 
-        const token = jwt.sign({ id: newUser._id, role: newUser.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
+        const token = jwt.sign({ id: newUser._id, role: "user" }, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.cookie("token", token, { httpOnly: true });
-        req.session.user = newUser;
 
-        return res.status(201).json({
-            message: "User registered successfully",
-            user: { id: newUser._id, name, email, role }
-        });
+        req.session.user = newUser;
+        return res.status(201).json({ message: "User registered successfully", user: { id: newUser._id, name, email } });
 
     } catch (error) {
         console.error("❌ Signup error:", error.message);
         return res.status(500).json({ error: "Server error" });
     }
 });
+
+// Admin Login Route
+router.post("/admin/login", async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        // Find user by email
+        const admin = await User.findOne({ email, role: "admin" });
+        if (!admin) {
+            return res.status(401).send("Admin not found!");
+        }
+
+        // Check password
+        const isMatch = await bcrypt.compare(password, admin.password);
+        if (!isMatch) {
+            return res.status(401).send("Incorrect password!");
+        }
+
+        // Store session
+        req.session.user = {
+            id: admin._id,
+            email: admin.email,
+            role: admin.role
+        };
+
+        res.redirect("/admin/dashboard"); // Redirect to Admin Dashboard
+    } catch (error) {
+        res.status(500).send("Server error!");
+    }
+});
+
+// Admin Logout Route
+router.get("/admin/logout", (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(500).send("Error logging out!");
+        }
+        res.redirect("/admin"); // Redirect to admin login page
+    });
+});
+
+
 
 // ✅ User Login Route
 router.get('/login', ensureGuest, (req, res) => {

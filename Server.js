@@ -90,6 +90,7 @@ require("./config/passport"); // ✅ Require the passport config file
 
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
+const adminRoutes = require('./routes/adminRoutes');
 const bookRoutes = require("./routes/bookRoutes");
 const pageRoutes = require("./routes/pageRoutes");
 const wishlistRoutes = require("./routes/wishlistRoutes");
@@ -132,6 +133,7 @@ app.use('/uploads', express.static('uploads'));
 app.use("/", pageRoutes);
 app.use("/api/auth", authRoutes); // ✅ Google OAuth now works here
 app.use("/api/users", userRoutes);
+app.use('/admin', adminRoutes);
 app.use("/api/books", bookRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 app.use("/", readRoutes);

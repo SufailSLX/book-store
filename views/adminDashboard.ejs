@@ -5,49 +5,79 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Manage Books</title>
     <link rel="stylesheet" href="/css/admin.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
 </head>
 <body>
+    <!-- Animated Background Elements -->
+    <div class="bg-circle circle-1"></div>
+    <div class="bg-circle circle-2"></div>
+    <div class="bg-circle circle-3"></div>
+    
     <!-- Navbar -->
     <nav class="navbar">
-        <h2>Admin Panel</h2>
-        <a href="/login" class="logout">Logout</a>
+        <h2 class="admin-title">Admin Panel</h2>
+        <a href="/login" class="logout animated-button">Logout</a>
     </nav>
 
     <!-- Main Container -->
     <div class="container">
         <!-- Add Book Form -->
-        <div class="form-container">
-            <h2>Add a New Book</h2>
-            <form action="/api/auth/books/add" method="POST" enctype="multipart/form-data">
-                <input type="text" name="title" placeholder="Book Title" required>
-                <input type="text" name="author" placeholder="Author" required>
-                <textarea name="description" placeholder="Short Description"></textarea>
-                <textarea name="content" placeholder="Book Content" required></textarea>
-                <input type="file" name="image" accept="image/*">
-                <button type="submit" class="animated-button">Add Book</button>
+        <div class="form-container floating-card">
+            <h2 class="form-title">Add a New Book</h2>
+            <form action="/admin/books/add" method="POST" enctype="multipart/form-data" class="book-form">
+                <div class="input-group">
+                    <input type="text" name="title" placeholder="Book Title" required class="form-input">
+                </div>
+                <div class="input-group">
+                    <input type="text" name="author" placeholder="Author" required class="form-input">
+                </div>
+                <div class="input-group">
+                    <textarea name="description" placeholder="Short Description" class="form-textarea"></textarea>
+                </div>
+                <div class="input-group">
+                    <textarea name="content" placeholder="Book Content" required class="form-textarea content-area"></textarea>
+                </div>
+                <div class="input-group file-input">
+                    <label for="book-image" class="file-label">
+                        <span class="file-button">Choose Cover Image</span>
+                        <span class="file-name">No file chosen</span>
+                    </label>
+                    <input type="file" name="image" id="book-image" accept="image/*" class="hidden-input">
+                </div>
+                <button type="submit" class="animated-button submit-button">
+                    <span class="button-text">Add Book</span>
+                    <span class="button-icon">+</span>
+                </button>
             </form>
         </div>
 
         <!-- Available Books List -->
-        <div class="books-list">
-            <h3>Available Books</h3>
-            <ul>
+        <div class="books-list floating-card">
+            <h3 class="books-title">Available Books</h3>
+            <ul class="book-items">
                 <% books.forEach(book => { %>
                     <li class="book-item">
                         <div class="book-details">
-                            <strong><%= book.title %></strong> by <%= book.author %>
+                            <strong class="book-title"><%= book.title %></strong> 
+                            <span class="book-author">by <%= book.author %></span>
                             <% if (book.image) { %>
                                 <img src="<%= book.image %>" alt="Book Cover" class="book-image">
                             <% } %>
                         </div>
-                        <form action="/api/auth/books/delete/<%= book._id %>" method="POST">
-                            <button type="submit" class="animated-button delete-button">Delete</button>
+                        <!-- <form action="/api/auth/books/delete/<%= book._id %>" method="POST" class="delete-form"> -->
+                            <form action="/admin/books/delete/<%= book._id %>" method="POST">
+                            <button type="submit" class="animated-button delete-button">
+                                <span class="button-text">Delete</span>
+                                <span class="button-icon">×</span>
+                            </button>
                         </form>
                     </li>
                 <% }); %>
             </ul>
         </div>
     </div>
+
+    <script src="/js/gsap.js"></script>
 </body>
 </html>
