@@ -284,3 +284,212 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// OTP 
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initial animation for the container
+    gsap.to('.otp-container', {
+        scale: 1,
+        opacity: 1,
+        duration: 0.8,
+        ease: 'elastic.out(1, 0.5)'
+    });
+
+    // Input fields animation on load
+    const inputs = document.querySelectorAll('.otp-input');
+    gsap.from(inputs, {
+        y: 30,
+        opacity: 0,
+        duration: 0.5,
+        stagger: 0.1,
+        delay: 0.3,
+        ease: 'back.out(1.7)'
+    });
+
+    // Button animation on load
+    gsap.from('.verify-btn', {
+        y: 20,
+        opacity: 0,
+        duration: 0.5,
+        delay: 0.8,
+        ease: 'power2.out'
+    });
+
+    // Resend text animation on load
+    gsap.from('.resend-text', {
+        y: 20,
+        opacity: 0,
+        duration: 0.5,
+        delay: 1,
+        ease: 'power2.out'
+    });
+
+    // Input field logic
+    inputs.forEach((input, index) => {
+        // Focus animation
+        input.addEventListener('focus', () => {
+            gsap.to(input, {
+                scale: 1.05,
+                duration: 0.2,
+                ease: 'power2.out'
+            });
+        });
+
+        // Blur animation
+        input.addEventListener('blur', () => {
+            gsap.to(input, {
+                scale: 1,
+                duration: 0.2,
+                ease: 'power2.out'
+            });
+        });
+
+        // Auto-focus next input
+        input.addEventListener('input', (e) => {
+            if (e.target.value.length === 1) {
+                if (index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+                
+                // Add a little bounce effect
+                gsap.to(input, {
+                    scale: 1.1,
+                    duration: 0.1,
+                    yoyo: true,
+                    repeat: 1,
+                    ease: 'power2.inOut'
+                });
+            }
+        });
+
+        // Handle backspace
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && e.target.value.length === 0 && index > 0) {
+                inputs[index - 1].focus();
+            }
+        });
+    });
+
+    // Verify button click animation and success message
+    const verifyBtn = document.querySelector('.verify-btn');
+    const successMessage = document.querySelector('.success-message');
+    
+    verifyBtn.addEventListener('click', () => {
+        // Check if all fields are filled
+        let allFilled = true;
+        inputs.forEach(input => {
+            if (input.value === '') {
+                allFilled = false;
+                // Shake animation for empty fields
+                gsap.to(input, {
+                    x: [-5, 5, -5, 5, 0],
+                    duration: 0.4,
+                    ease: 'power1.inOut'
+                });
+                input.style.borderColor = '#ff4757';
+                
+                // Return to normal after 1.5 seconds
+                setTimeout(() => {
+                    input.style.borderColor = '#ddd';
+                }, 1500);
+            }
+        });
+
+        if (allFilled) {
+            // Button press animation
+            gsap.to(verifyBtn, {
+                scale: 0.95,
+                duration: 0.1,
+                yoyo: true,
+                repeat: 1,
+                ease: 'power2.inOut',
+                onComplete: () => {
+                    // Show success message
+                    gsap.to(successMessage, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.5,
+                        ease: 'power2.out',
+                        pointerEvents: 'auto'
+                    });
+
+                    // Success icon animation
+                    gsap.from('.success-icon', {
+                        scale: 0,
+                        rotation: -180,
+                        duration: 0.8,
+                        ease: 'elastic.out(1, 0.5)'
+                    });
+
+                    // Confetti effect
+                    createConfetti();
+                }
+            });
+        }
+    });
+
+    // Resend link animation
+    const resendLink = document.querySelector('.resend-link');
+    resendLink.addEventListener('click', () => {
+        // Shake animation
+        gsap.to(resendLink, {
+            x: [-5, 5, -5, 5, 0],
+            duration: 0.4,
+            ease: 'power1.inOut'
+        });
+
+        // Change text temporarily
+        const originalText = resendLink.textContent;
+        resendLink.textContent = 'Sent!';
+        
+        // Reset after 1.5 seconds
+        setTimeout(() => {
+            resendLink.textContent = originalText;
+        }, 1500);
+    });
+
+    // Confetti effect function
+    function createConfetti() {
+        const colors = ['#ff4757', '#ff6348', '#ff7f50', '#ffa502', '#ffd700', '#eccc68', '#7bed9f', '#2ed573', '#1dd1a1', '#17c0eb', '#7158e2', '#a55eea'];
+        
+        for (let i = 0; i < 100; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            document.body.appendChild(confetti);
+            
+            // Random position
+            const startX = Math.random() * window.innerWidth;
+            const startY = -10;
+            
+            // Random end position
+            const endX = startX + (Math.random() - 0.5) * 200;
+            const endY = window.innerHeight + 10;
+            
+            // Random rotation
+            const rotation = Math.random() * 360;
+            
+            // Random size
+            const size = Math.random() * 8 + 4;
+            
+            // Set initial position
+            confetti.style.left = `${startX}px`;
+            confetti.style.top = `${startY}px`;
+            confetti.style.width = `${size}px`;
+            confetti.style.height = `${size}px`;
+            
+            // Animate confetti
+            gsap.to(confetti, {
+                x: endX - startX,
+                y: endY - startY,
+                rotation: rotation,
+                duration: Math.random() * 3 + 2,
+                ease: 'power1.out',
+                onComplete: () => {
+                    confetti.remove();
+                }
+            });
+        }
+    }
+});

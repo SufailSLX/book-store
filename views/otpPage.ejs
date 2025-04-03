@@ -1,0 +1,174 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>Enter OTP</h2>
+        <form id="otpForm">
+            <input type="hidden" id="email" name="email" value="<%= email %>">
+            <input type="text" id="otp" name="otp" placeholder="Enter 6-digit OTP" required maxlength="6">
+            <button type="submit">Verify</button>
+            <button type="button" id="resendBtn">Resend OTP</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("otpForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            let email = document.getElementById("email").value;
+            let otp = document.getElementById("otp").value.trim();
+
+            let response = await fetch("/verify-otp", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, otp })
+            });
+
+            let data = await response.json();
+            
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: data.message,
+                }).then(() => {
+                    window.location.href = data.redirect;
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.message,
+                });
+            }
+        });
+
+        document.getElementById("resendBtn").addEventListener("click", async function() {
+            let email = document.getElementById("email").value;
+            
+            let response = await fetch("/resend-otp", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email })
+            });
+
+            let data = await response.json();
+            
+            Swal.fire({
+                icon: data.success ? 'success' : 'error',
+                title: data.success ? 'Success' : 'Error',
+                text: data.message,
+            });
+        });
+    </script>
+</body>
+</html> -->
+
+<!-- views/otpPage.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP</title>
+    <link rel="stylesheet" href="/css/otp.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>Enter OTP</h2>
+        <p>We've sent a 6-digit OTP to <%= email %></p>
+        <form id="otpForm">
+            <input type="hidden" id="email" name="email" value="<%= email %>">
+            <input type="text" id="otp" name="otp" placeholder="Enter 6-digit OTP" required maxlength="6" pattern="\d{6}">
+            <button type="submit">Verify</button>
+            <button type="button" id="resendBtn">Resend OTP</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("otpForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            let email = document.getElementById("email").value;
+            let otp = document.getElementById("otp").value.trim();
+
+            if (otp.length !== 6 || !/^\d+$/.test(otp)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid OTP',
+                    text: 'Please enter a valid 6-digit OTP',
+                });
+                return;
+            }
+
+            try {
+                let response = await fetch("/api/auth/verify-otp", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, otp })
+                });
+
+                let data = await response.json();
+                
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: data.message,
+                    }).then(() => {
+                        window.location.href = data.redirect;
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message,
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong. Please try again.',
+                });
+            }
+        });
+
+        document.getElementById("resendBtn").addEventListener("click", async function() {
+            let email = document.getElementById("email").value;
+            
+            try {
+                let response = await fetch("/api/auth/resend-otp", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email })
+                });
+
+                let data = await response.json();
+                
+                Swal.fire({
+                    icon: data.success ? 'success' : 'error',
+                    title: data.success ? 'Success' : 'Error',
+                    text: data.message,
+                });
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to resend OTP. Please try again.',
+                });
+            }
+        });
+
+        
+    </script>
+</body>
+</html>

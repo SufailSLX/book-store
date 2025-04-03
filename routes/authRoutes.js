@@ -7,7 +7,9 @@ const User = require('../models/User');
 const Book = require('../models/Book');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { ensureAuth, ensureGuest } = require('../middleware/authMiddleware');
+const { ensureAuth, ensureGuest,  ensureVerified } = require('../middleware/authMiddleware');
+const { sendVerificationEmai,sendOTPEmail } = require("../utils/emailService");
+
 require("../config/passport");
 require("dotenv").config();
 
@@ -64,71 +66,204 @@ router.get(
     }
 );
 
+
 // ✅ User Signup Route
-// router.post('/signup', ensureGuest, async (req, res) => {
-//     try {
-//         const { name, email, password, role } = req.body;
 
-//         if (!name || !email || !password || !role) {
-//             return res.status(400).json({ message: "All fields are required" });
-//         }
-
-//         const existingUser = await User.findOne({ email });
-//         if (existingUser) {
-//             return res.status(400).json({ message: "User already exists" });
-//         }
-
-//         const hashedPassword = await bcrypt.hash(password, 10);
-
-//         const newUser = new User({ name, email, password: hashedPassword, role });
-//         await newUser.save();
-
-//         const token = jwt.sign({ id: newUser._id, role: newUser.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-//         res.cookie("token", token, { httpOnly: true });
-//         req.session.user = newUser;
-
-//         return res.status(201).json({
-//             message: "User registered successfully",
-//             user: { id: newUser._id, name, email, role }
-//         });
-
-//     } catch (error) {
-//         console.error("❌ Signup error:", error.message);
-//         return res.status(500).json({ error: "Server error" });
-//     }
-// });
-
-// ✅ User Signup Route (Default Role: "user")
-router.post('/signup', ensureGuest, async (req, res) => {
+router.post("/signup", async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
-        if (!name || !email || !password) {
-            return res.status(400).json({ message: "All fields are required" });
+        // Check if user already exists and is verified
+        let user = await User.findOne({ email });
+        if (user && user.isVerified) {
+            return res.status(400).json({ success: false, message: "Email already exists and is verified" });
         }
 
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: "User already exists" });
+        // If session exists for this email
+        if (req.session.signupEmail === email) {
+            return res.status(400).json({ success: false, message: "OTP already sent to your email" });
         }
 
+        // Hash Password
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({ name, email, password: hashedPassword, role: "user" });
 
-        await newUser.save();
+        // Generate OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-        const token = jwt.sign({ id: newUser._id, role: "user" }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.cookie("token", token, { httpOnly: true });
+        // Create or update user with OTP
+        if (!user) {
+            user = new User({ 
+                name, 
+                email, 
+                password: hashedPassword, 
+                isVerified: false,
+                otp,
+                otpExpires
+            });
+        } else {
+            user.otp = otp;
+            user.otpExpires = otpExpires;
+            user.password = hashedPassword;
+        }
 
-        req.session.user = newUser;
-        return res.status(201).json({ message: "User registered successfully", user: { id: newUser._id, name, email } });
+        await user.save();
+
+        // Store email in session for verification
+        req.session.signupEmail = email;
+        req.session.save();
+
+        // Send OTP Email
+        await sendOTPEmail(email, otp);
+
+        res.status(200).json({ 
+            success: true, 
+            message: "OTP sent to your email", 
+            redirect: "/otp-verify" 
+        });
 
     } catch (error) {
-        console.error("❌ Signup error:", error.message);
-        return res.status(500).json({ error: "Server error" });
+        console.error(error);
+        res.status(500).json({ success: false, message: "Server error" });
     }
 });
+
+// OTP Verification Page Route
+router.get('/otp-verify', (req, res) => {
+    if (!req.session.signupEmail) {
+        return res.redirect('/signup');
+    }
+    res.render('otpPage', { email: req.session.signupEmail });
+});
+
+// In the verify-otp route
+router.post('/verify-otp', async (req, res) => {
+    const { email, otp } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+
+        if (!user || user.otp !== otp || user.otpExpires < Date.now()) {
+            return res.json({ success: false, message: "Invalid OTP." });
+        }
+
+        // Mark user as verified
+        user.isVerified = true;
+        user.otp = undefined;
+        user.otpExpires = undefined;
+        await user.save();
+
+        // Create JWT token
+        const token = jwt.sign(
+            { id: user._id, role: user.role, isVerified: true }, 
+            process.env.JWT_SECRET, 
+            { expiresIn: '1h' }
+        );
+
+        // Set cookie and session
+        res.cookie("token", token, { 
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict'
+        });
+        
+        req.session.user = {
+            id: user._id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+            isVerified: true
+        };
+
+        // Clear signup email from session
+        req.session.signupEmail = null;
+        await req.session.save();
+
+        res.json({ 
+            success: true, 
+            message: "OTP verified successfully!",
+            redirect: "/api/auth/dashboard"
+        });
+    } catch (error) {
+        console.error("OTP Verification Error:", error);
+        res.json({ success: false, message: "Something went wrong." });
+    }
+});
+
+// Dashboard route with cache control
+router.get('/dashboard', ensureAuth, ensureVerified, async (req, res) => {
+    try {
+        // Extra verification
+        if (!req.session.user?.isVerified) {
+            return res.redirect('/otp-verify');
+        }
+
+        const books = await Book.find().limit(5);
+        
+        // Set no-cache headers
+        res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+        res.set('Pragma', 'no-cache');
+        res.set('Expires', '0');
+        
+        res.render('dashboard', {
+            user: req.session.user,
+            books: books
+        });
+    } catch (error) {
+        console.error('Dashboard error:', error);
+        res.redirect('/login');
+    }
+});
+
+// Resend OTP Route
+router.post('/resend-otp', async (req, res) => {
+    const { email } = req.body;
+    
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.json({ success: false, message: "User not found." });
+        }
+
+        // Generate new OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+        // Update user with new OTP
+        user.otp = otp;
+        user.otpExpires = otpExpires;
+        await user.save();
+
+        // Send new OTP email
+        await sendOTPEmail(email, otp);
+
+        res.json({ 
+            success: true, 
+            message: "New OTP has been sent to your email." 
+        });
+    } catch (error) {
+        console.error("Resend OTP Error:", error);
+        res.json({ success: false, message: "Failed to resend OTP." });
+    }
+});
+
+// Email Verification Route
+router.get("/verify/:token", async (req, res) => {
+    try {
+        const { token } = req.params;
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const email = decoded.email;
+
+        // Verify User
+        await User.findOneAndUpdate({ email }, { isVerified: true });
+
+        res.redirect("/dashboard"); // Redirect to the user's dashboard
+    } catch (error) {
+        console.error("Verification error:", error);
+        res.status(400).send("Invalid or expired token.");
+    }
+});
+
 
 // Admin Login Route
 router.post("/admin/login", async (req, res) => {
@@ -220,26 +355,48 @@ router.get('/logout', (req, res) => {
     });
 });
 
-// ✅ Dashboard Route (Ensuring Session Persists)
-router.get('/dashboard', ensureAuth, async (req, res) => {
-    if (!req.session.user) {
-        return res.redirect('/login');
-    }
+// router.get('/dashboard', ensureAuth, async (req, res) => {
+//     try {
+//         const books = await Book.find().limit(5); // Fetch books from database
+//         res.render('dashboard', {
+//             user: req.session.user,
+//             books: books // Pass books to the template
+//         });
+//     } catch (error) {
+//         console.error('Dashboard error:', error);
+//         res.render('dashboard', {
+//             user: req.session.user,
+//             books: [] // Fallback empty array if error occurs
+//         });
+//     }
+// });
 
-    try {
-        const user = req.session.user;
-        const books = await Book.find();
+// router.get('/dashboard', ensureAuth, async (req, res) => {
+//     try {
+//         if (!req.session.user) {
+//             return res.redirect('/login');
+//         }
 
-        if (user.role === 'admin') {
-            return res.render('adminDashboard', { user, books });
-        }
-
-        return res.render('dashboard', { user, books });
-
-    } catch (error) {
-        console.error("❌ Dashboard Error:", error.message);
-        return res.redirect('/login');
-    }
+//         const books = await Book.find().limit(5); // Fetch books from database
+//         res.render('dashboard', {
+//             user: req.session.user,
+//             books: books // Pass books to the template
+//         });
+//     } catch (error) {
+//         console.error('Dashboard error:', error);
+//         res.render('dashboard', {
+//             user: req.session.user,
+//             books: [] // Fallback empty array if error occurs
+//         });
+//     }
+// });
+// Session check endpoint
+router.get('/check-session', (req, res) => {
+    res.json({
+        authenticated: !!req.session.user,
+        verified: req.session.user?.isVerified
+    });
 });
+
 
 module.exports = router;

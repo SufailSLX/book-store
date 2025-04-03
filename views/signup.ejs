@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Signup</title>
     <link rel="stylesheet" href="/css/signup.css">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
@@ -13,7 +13,6 @@
 <body>
     <!-- Video Background -->
     <video id="video-background" autoplay muted loop>
-        <!-- <source src="/assets/signupintro.mp4" type="video/mp4"> -->
         <source src="/assets/signup.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
@@ -49,25 +48,15 @@
                 <input type="password" id="password" name="password" placeholder="Password" required>
                 <span id="passwordError" class="error-message"></span><br>
 
-                <!-- <select id="role" name="role">
-                    <option value="user">User</option>
-                    <option value="admin">Admin</option>
-                </select><br> -->
-
                 <p class="or-divider">- OR -</p>
 
                 <div class="social-buttons">
                     <a href="/api/auth/google">
                         <i class="fab fa-google"></i> Sign up with Google
                     </a>
-            
-                    <!-- <button class="google-btn"><i class="fab fa-google"></i> Sign up with Google</button> -->
-                    <!-- <a href="/api/auth/google" class="google-btn"><i class="fab fa-google"></i> Sign up with Google</a> -->
-
-                    <!-- <button class="facebook-btn"><i class="fab fa-facebook"></i> Sign up with Facebook</button> -->
                 </div>
 
-                <p>Already have an account? <a href="/login">Login</a></p>
+                <p>Already have an account? <a href="/login" id="loginLink">Login</a></p>
                 <button type="submit" class="signup-btn">Signup</button>
             </form>
         </div>
@@ -81,92 +70,150 @@
             }, 3000);
         };
 
-        // Clear error messages when typing
-        document.getElementById("name").addEventListener("input", function() {
-            document.getElementById("nameError").textContent = "";
+        // // Clear error messages when typing
+        // document.getElementById("name").addEventListener("input", function() {
+        //     document.getElementById("nameError").textContent = "";
+        // });
+
+        // document.getElementById("email").addEventListener("input", function() {
+        //     document.getElementById("emailError").textContent = "";
+        // });
+
+        // document.getElementById("password").addEventListener("input", function() {
+        //     document.getElementById("passwordError").textContent = "";
+        // });
+
+        // // Form Submission
+        // document.getElementById("signupForm").addEventListener("submit", async function(event) {
+        //     event.preventDefault(); // Prevent page reload
+
+        //     let name = document.getElementById("name").value.trim();
+        //     let email = document.getElementById("email").value.trim();
+        //     let password = document.getElementById("password").value.trim();
+
+        //     // Clear previous errors
+        //     document.getElementById("nameError").textContent = "";
+        //     document.getElementById("emailError").textContent = "";
+        //     document.getElementById("passwordError").textContent = "";
+
+        //     let isValid = true;
+
+        //     // Name Validation
+        //     if (name.length < 3) {
+        //         document.getElementById("nameError").textContent = "Name must be at least 3 characters.";
+        //         isValid = false;
+        //     }
+
+        //     // Email Validation (Basic Regex Check)
+        //     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        //     if (!emailPattern.test(email)) {
+        //         document.getElementById("emailError").textContent = "Enter a valid email.";
+        //         isValid = false;
+        //     }
+
+        //     // Password Validation
+        //     if (password.length < 6) {
+        //         document.getElementById("passwordError").textContent = "Password must be at least 6 characters.";
+        //         isValid = false;
+        //     }
+
+        //     if (!isValid) return; // Stop submission if validation fails
+
+        //     try {
+        //         let response = await fetch("/api/auth/signup", {
+        //             method: "POST",
+        //             headers: { "Content-Type": "application/json" },
+        //             body: JSON.stringify({ name, email, password })
+        //         });
+
+        //         let data = await response.json();
+
+        //         if (!data.success) {
+        //             showPopup(data.message, "error"); // Show error pop-up
+        //         } else {
+        //             showPopup("Signup successful! Redirecting to login...", "success");
+
+        //             // Redirect after 2 seconds
+        //             setTimeout(() => {
+        //                 window.location.href = "/login";
+        //             }, 2000);
+        //         }
+        //     } catch (error) {
+        //         showPopup("Something went wrong. Please try again.", "error");
+        //     }
+        // });
+
+        // // Function to Show Pop-up
+        // function showPopup(message, type) {
+        //     const popup = document.getElementById("successPopup");
+        //     const popupMessage = document.getElementById("popupMessage");
+
+        //     popupMessage.textContent = message;
+        //     popup.classList.add(type === "success" ? "popup-success" : "popup-error");
+        //     popup.style.display = "block";
+
+        //     // Hide popup after 3 seconds
+        //     setTimeout(() => {
+        //         popup.style.display = "none";
+        //         popup.classList.remove("popup-success", "popup-error");
+        //     }, 3000);
+        // }
+
+        // In views/signup.ejs, update the form submission script:
+document.getElementById("signupForm").addEventListener("submit", async function(event) {
+    event.preventDefault(); // Prevent page reload
+
+    let name = document.getElementById("name").value.trim();
+    let email = document.getElementById("email").value.trim();
+    let password = document.getElementById("password").value.trim();
+
+    // Clear previous errors
+    document.getElementById("nameError").textContent = "";
+    document.getElementById("emailError").textContent = "";
+    document.getElementById("passwordError").textContent = "";
+
+    let isValid = true;
+
+    // Name Validation
+    if (name.length < 3) {
+        document.getElementById("nameError").textContent = "Name must be at least 3 characters.";
+        isValid = false;
+    }
+
+    // Email Validation (Basic Regex Check)
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailPattern.test(email)) {
+        document.getElementById("emailError").textContent = "Enter a valid email.";
+        isValid = false;
+    }
+
+    // Password Validation
+    if (password.length < 6) {
+        document.getElementById("passwordError").textContent = "Password must be at least 6 characters.";
+        isValid = false;
+    }
+
+    if (!isValid) return; // Stop submission if validation fails
+
+    try {
+        let response = await fetch("/api/auth/signup", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, email, password })
         });
 
-        document.getElementById("email").addEventListener("input", function() {
-            document.getElementById("emailError").textContent = "";
-        });
+        let data = await response.json();
 
-        document.getElementById("password").addEventListener("input", function() {
-            document.getElementById("passwordError").textContent = "";
-        });
-
-        // Form Submission
-        document.getElementById("signupForm").addEventListener("submit", async function(event) {
-            event.preventDefault(); // Prevent page reload
-
-            let name = document.getElementById("name").value.trim();
-            let email = document.getElementById("email").value.trim();
-            let password = document.getElementById("password").value.trim();
-            let role = document.getElementById("role").value;
-
-            // Clear previous errors
-            document.getElementById("nameError").textContent = "";
-            document.getElementById("emailError").textContent = "";
-            document.getElementById("passwordError").textContent = "";
-
-            let isValid = true;
-
-            // Name Validation
-            if (name.length < 3) {
-                document.getElementById("nameError").textContent = "Name must be at least 3 characters.";
-                isValid = false;
-            }
-
-            // Email Validation (Basic Regex Check)
-            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            if (!emailPattern.test(email)) {
-                document.getElementById("emailError").textContent = "Enter a valid email.";
-                isValid = false;
-            }
-
-            // Password Validation
-            if (password.length < 6) {
-                document.getElementById("passwordError").textContent = "Password must be at least 6 characters.";
-                isValid = false;
-            }
-
-            if (!isValid) return; // Stop submission if validation fails
-
-            // Send Data to Backend
-            let response = await fetch("/api/auth/signup", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, email, password, role })
-            });
-
-            let data = await response.json();
-
-            if (!data.success) {
-                showPopup(data.message, "error"); // Show error pop-up
-            } else {
-                showPopup("Signup successful! Redirecting to login...", "success");
-
-                // Redirect after 2 seconds
-                setTimeout(() => {
-                    window.location.href = "/login";
-                }, 2000);
-            }
-        });
-
-        // Function to Show Pop-up
-        function showPopup(message, type) {
-            const popup = document.getElementById("successPopup");
-            const popupMessage = document.getElementById("popupMessage");
-
-            popupMessage.textContent = message;
-            popup.classList.add(type === "success" ? "popup-success" : "popup-error");
-            popup.style.display = "block";
-
-            // Hide popup after 3 seconds
-            setTimeout(() => {
-                popup.style.display = "none";
-                popup.classList.remove("popup-success", "popup-error");
-            }, 3000);
+        if (!data.success) {
+            showPopup(data.message, "error");
+        } else {
+            // Redirect to OTP page on successful signup
+            window.location.href = data.redirect;
         }
+    } catch (error) {
+        showPopup("Something went wrong. Please try again.", "error");
+    }
+});
     </script>
 </body>
 </html>
