@@ -4,97 +4,493 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verify OTP</title>
-    <link rel="stylesheet" href="/css/otp.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --error: #f72585;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+            animation: fadeInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(67, 97, 238, 0.4); }
+            70% { transform: scale(1.02); box-shadow: 0 0 0 12px rgba(67, 97, 238, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(67, 97, 238, 0); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+        
+        h2 {
+            color: var(--dark);
+            margin-bottom: 16px;
+            font-weight: 700;
+            font-size: 28px;
+        }
+        
+        p {
+            color: #6c757d;
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+        
+        .email-display {
+            font-weight: 600;
+            color: var(--primary);
+            display: inline-block;
+            padding: 4px 8px;
+            background: rgba(67, 97, 238, 0.1);
+            border-radius: 4px;
+            margin-top: 8px;
+        }
+        
+        #otpForm {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        
+        .otp-input-container {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .otp-input {
+            width: 50px;
+            height: 60px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+            color: var(--dark);
+        }
+        
+        .otp-input:focus {
+            border-color: var(--primary);
+            outline: none;
+            background: white;
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .otp-input.filled {
+            border-color: var(--success);
+            background: rgba(76, 201, 240, 0.1);
+        }
+        
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        button {
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        button[type="submit"] {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+        }
+        
+        button[type="submit"]:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(67, 97, 238, 0.4);
+        }
+        
+        button[type="submit"]:active {
+            transform: translateY(0);
+        }
+        
+        #resendBtn {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid #e9ecef;
+        }
+        
+        #resendBtn:hover {
+            background: #f8f9fa;
+            border-color: #dee2e6;
+        }
+        
+        .timer {
+            color: #6c757d;
+            font-size: 14px;
+            margin-top: -12px;
+        }
+        
+        .error-animation {
+            animation: shake 0.5s ease-in-out;
+            border-color: var(--error) !important;
+        }
+        
+        .success-animation {
+            animation: pulse 0.6s ease-in-out;
+        }
+        
+        .resend-notice {
+            color: var(--primary);
+            font-size: 14px;
+            margin-top: -10px;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .resend-notice.show {
+            opacity: 1;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            .otp-input {
+                width: 40px;
+                height: 50px;
+                font-size: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h2>Enter OTP</h2>
-        <p>We've sent a 6-digit OTP to <%= email %></p>
+        <div class="icon-container">
+            <i class="fas fa-shield-alt" style="font-size: 48px; color: #4361ee; margin-bottom: 16px;"></i>
+        </div>
+        <h2>Verify Your Account</h2>
+        <p>We've sent a 6-digit verification code to</p>
+        <div class="email-display"><%= email %></div>
+        
         <form id="otpForm">
             <input type="hidden" id="email" name="email" value="<%= email %>">
-            <input type="text" id="otp" name="otp" placeholder="Enter 6-digit OTP" required maxlength="6" pattern="\d{6}">
-            <button type="submit">Verify</button>
-            <button type="button" id="resendBtn">Resend OTP</button>
+            
+            <div class="otp-input-container" id="otpContainer">
+                <input type="text" class="otp-input" maxlength="1" data-index="1">
+                <input type="text" class="otp-input" maxlength="1" data-index="2">
+                <input type="text" class="otp-input" maxlength="1" data-index="3">
+                <input type="text" class="otp-input" maxlength="1" data-index="4">
+                <input type="text" class="otp-input" maxlength="1" data-index="5">
+                <input type="text" class="otp-input" maxlength="1" data-index="6">
+            </div>
+            <input type="hidden" id="otp" name="otp">
+            
+            <div class="timer" id="timer">Resend OTP in 02:00</div>
+            <div class="resend-notice" id="resendNotice">Verification code has been resent!</div>
+            
+            <div class="button-group">
+                <button type="submit">
+                    <i class="fas fa-check-circle"></i> Verify Code
+                </button>
+                <button type="button" id="resendBtn" disabled>
+                    <i class="fas fa-redo"></i> Resend Code
+                </button>
+            </div>
         </form>
     </div>
 
     <script>
-        document.getElementById("otpForm").addEventListener("submit", async function(event) {
-            event.preventDefault();
+        document.addEventListener("DOMContentLoaded", function() {
+            const otpInputs = document.querySelectorAll('.otp-input');
+const otpField = document.getElementById('otp');
+const form = document.getElementById('otpForm');
+const resendBtn = document.getElementById('resendBtn');
+const timerElement = document.getElementById('timer');
+const resendNotice = document.getElementById('resendNotice');
 
-            let email = document.getElementById("email").value;
-            let otp = document.getElementById("otp").value.trim();
+// Auto-focus first input
+otpInputs[0].focus();
 
-            if (otp.length !== 6 || !/^\d+$/.test(otp)) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Invalid OTP',
-                    text: 'Please enter a valid 6-digit OTP',
-                });
-                return;
+// Handle OTP input
+otpInputs.forEach((input, index) => {
+    input.addEventListener('input', (e) => {
+        const value = e.target.value;
+        if (value.length === 1) {
+            if (index < otpInputs.length - 1) {
+                otpInputs[index + 1].focus();
             }
+            e.target.classList.add('filled');
+        } else {
+            e.target.classList.remove('filled');
+        }
+        updateOTPValue();
+    });
+    
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && e.target.value === '' && index > 0) {
+            otpInputs[index - 1].focus();
+        }
+    });
+});
 
-            try {
-                let response = await fetch("/api/auth/verify-otp", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email, otp })
-                });
+function updateOTPValue() {
+    let otp = '';
+    otpInputs.forEach(input => {
+        otp += input.value;
+    });
+    otpField.value = otp;
+}
 
-                let data = await response.json();
-                
-                if (data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: data.message,
-                    }).then(() => {
-                        window.location.href = data.redirect;
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: data.message,
-                    });
-                }
-            } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Something went wrong. Please try again.',
-                });
-            }
+// Timer functionality - CHANGED TO 10 SECONDS
+let timeLeft = 10; // Changed from 120 to 10 seconds
+const timer = setInterval(() => {
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    timerElement.textContent = `Resend OTP in ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    
+    if (timeLeft <= 0) {
+        clearInterval(timer);
+        timerElement.textContent = '';
+        resendBtn.disabled = false;
+    } else {
+        timeLeft--;
+    }
+}, 1000);
+
+// Form submission
+form.addEventListener("submit", async function(event) {
+    event.preventDefault();
+    
+    const email = document.getElementById("email").value;
+    const otp = otpField.value.trim();
+    
+    if (otp.length !== 6 || !/^\d+$/.test(otp)) {
+        otpInputs.forEach(input => {
+            input.classList.add('error-animation');
+            setTimeout(() => {
+                input.classList.remove('error-animation');
+            }, 500);
         });
-
-        document.getElementById("resendBtn").addEventListener("click", async function() {
-            let email = document.getElementById("email").value;
-            
-            try {
-                let response = await fetch("/api/auth/resend-otp", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email })
-                });
-
-                let data = await response.json();
-                
-                Swal.fire({
-                    icon: data.success ? 'success' : 'error',
-                    title: data.success ? 'Success' : 'Error',
-                    text: data.message,
-                });
-            } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Failed to resend OTP. Please try again.',
-                });
-            }
-        });
-
         
+        Swal.fire({
+            icon: 'error',
+            title: 'Invalid Code',
+            text: 'Please enter a valid 6-digit verification code',
+            confirmButtonColor: '#4361ee'
+        });
+        return;
+    }
+    
+    try {
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+        submitBtn.disabled = true;
+        
+        const response = await fetch("/api/auth/verify-otp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, otp })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            otpInputs.forEach(input => {
+                input.classList.add('success-animation');
+                input.readOnly = true;
+            });
+            
+            await Swal.fire({
+                icon: 'success',
+                title: 'Verified!',
+                text: data.message,
+                confirmButtonColor: '#4361ee',
+                timer: 2000,
+                timerProgressBar: true
+            });
+            
+            window.location.href = data.redirect;
+        } else {
+            otpInputs.forEach(input => {
+                input.classList.add('error-animation');
+                setTimeout(() => {
+                    input.classList.remove('error-animation');
+                }, 500);
+            });
+            
+            Swal.fire({
+                icon: 'error',
+                title: 'Verification Failed',
+                text: data.message,
+                confirmButtonColor: '#4361ee'
+            });
+            
+            submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Verify Code';
+            submitBtn.disabled = false;
+        }
+    } catch (error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Something went wrong. Please try again.',
+            confirmButtonColor: '#4361ee'
+        });
+        
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Verify Code';
+        submitBtn.disabled = false;
+    }
+});
+
+// Resend OTP
+resendBtn.addEventListener("click", async function() {
+    const email = document.getElementById("email").value;
+    
+    try {
+        resendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+        resendBtn.disabled = true;
+        
+        const response = await fetch("/api/auth/resend-otp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Show verification message
+            resendNotice.classList.add('show');
+            setTimeout(() => {
+                resendNotice.classList.remove('show');
+            }, 3000);
+            
+            // Reset timer -
+            timeLeft = 10;
+            clearInterval(timer);
+            const newTimer = setInterval(() => {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerElement.textContent = `Resend OTP in ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(newTimer);
+                    timerElement.textContent = '';
+                    resendBtn.disabled = false;
+                } else {
+                    timeLeft--;
+                }
+            }, 1000);
+            
+            // Clear OTP fields
+            otpInputs.forEach(input => {
+                input.value = '';
+                input.classList.remove('filled', 'error-animation');
+                input.readOnly = false;
+            });
+            otpInputs[0].focus();
+            
+            // Show success toast
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+            
+            Toast.fire({
+                icon: 'success',
+                title: 'New verification code sent!'
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.message,
+                confirmButtonColor: '#4361ee'
+            });
+        }
+        
+        resendBtn.innerHTML = '<i class="fas fa-redo"></i> Resend Code';
+        if (timeLeft <= 0) {
+            resendBtn.disabled = false;
+        }
+    } catch (error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to resend code. Please try again.',
+            confirmButtonColor: '#4361ee'
+        });
+        
+        resendBtn.innerHTML = '<i class="fas fa-redo"></i> Resend Code';
+        resendBtn.disabled = false;
+    }
+});
+        });
     </script>
 </body>
 </html>
