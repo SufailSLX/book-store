@@ -315,18 +315,49 @@ router.get('/login', ensureGuest, (req, res) => {
     res.render('login'); // Render the login page
 });
 
+// router.post('/login', ensureGuest, async (req, res) => {
+//     try {
+//         const { email, password } = req.body;
+
+//         if (!email || !password) {
+//             return res.status(400).json({ message: "Email and password are required" });
+//         }
+
+//         const user = await User.findOne({ email });
+
+//         if (!user || !(await bcrypt.compare(password, user.password))) {
+//             return res.status(400).json({ message: "Invalid credentials" });
+//         }
+
+//         const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+//         res.cookie("token", token, { httpOnly: true });
+//         req.session.user = user;
+
+//         return res.redirect('/api/auth/dashboard');
+
+//     } catch (error) {
+//         console.error("❌ Login error:", error.message);
+//         return res.status(500).json({ message: "Server error" });
+//     }
+// });
+
 router.post('/login', ensureGuest, async (req, res) => {
     try {
         const { email, password } = req.body;
 
         if (!email || !password) {
-            return res.status(400).json({ message: "Email and password are required" });
+            return res.redirect('/login?error=Email and password are required');
         }
 
         const user = await User.findOne({ email });
 
-        if (!user || !(await bcrypt.compare(password, user.password))) {
-            return res.status(400).json({ message: "Invalid credentials" });
+        if (!user) {
+            return res.redirect('/login?error=Email not found');
+        }
+
+        if (!(await bcrypt.compare(password, user.password))) {
+            return res.redirect('/login?error=Incorrect password');
         }
 
         const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
@@ -338,7 +369,7 @@ router.post('/login', ensureGuest, async (req, res) => {
 
     } catch (error) {
         console.error("❌ Login error:", error.message);
-        return res.status(500).json({ message: "Server error" });
+        return res.redirect('/login?error=Server error. Please try again later.');
     }
 });
 

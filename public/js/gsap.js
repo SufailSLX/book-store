@@ -286,3 +286,71 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // OTP 
+
+// DASHBOARD 
+
+// GSAP Animations
+document.addEventListener("DOMContentLoaded", () => {
+    // Navbar Animation
+    gsap.from(".navbar", {
+        y: -100,
+        opacity: 0,
+        duration: 1,
+        ease: "power2.out"
+    });
+
+    // Intro Section Animation
+    gsap.from(".intro-content", {
+        x: -200,
+        opacity: 0,
+        duration: 1.5,
+        ease: "power3.out",
+        delay: 0.5
+    });
+
+    gsap.from(".intro-img", {
+        x: 200,
+        opacity: 0,
+        duration: 1.5,
+        ease: "power3.out",
+        delay: 0.7
+    });
+
+    // About Section Animation
+    gsap.from(".about-container", {
+        scrollTrigger: {
+            trigger: ".about-us",
+            start: "top 80%",
+        },
+        y: 100,
+        opacity: 0,
+        duration: 1,
+        ease: "power2.out"
+    });
+
+    // Book Cards Animation
+    gsap.from(".book-card", {
+        scrollTrigger: {
+            trigger: "#book-list",
+            start: "top 80%",
+        },
+        y: 50,
+        opacity: 0,
+        duration: 1,
+        stagger: 0.2,
+        ease: "power2.out"
+    });
+
+    // Footer Animation
+    gsap.from(".footer-container", {
+        scrollTrigger: {
+            trigger: ".footer",
+            start: "top 90%",
+        },
+        y: 50,
+        opacity: 0,
+        duration: 1,
+        ease: "power2.out"
+    });
+});
+

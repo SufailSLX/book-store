@@ -8,8 +8,8 @@
     <meta http-equiv="Expires" content="0">
     <title>Login - Turn Your Ideas into Reality</title>
     <link rel="stylesheet" href="/css/login.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 </head>
 <body>
     <div class="login-container">
@@ -18,56 +18,144 @@
             <p>Start for free and get attractive offers from the community</p>
         </div>
 
-        <!-- Display general error message if exists -->
-        <% if (typeof errorMessage !== "undefined" && errorMessage) { %>
-            <p class="error-message"><%= errorMessage %></p>
-        <% } %>
-
-        <form class="login-form" action="/api/auth/login" method="POST">
+        <!-- <form class="login-form" action="/api/auth/login" method="POST">
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" placeholder="Enter your email" required>
-                <!-- Display email-specific error message -->
-                <% if (typeof emailError !== "undefined" && emailError) { %>
-                    <p id="email-error" class="field-error"><%= emailError %></p>
-                <% } %>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" placeholder="Enter your password" required>
-                <!-- Display password-specific error message -->
-                <% if (typeof passwordError !== "undefined" && passwordError) { %>
-                    <p id="password-error" class="field-error"><%= passwordError %></p>
-                <% } %>
+            </div>
+            <button type="submit" class="login-btn">Login</button>
+            <p class="signup-link">Don't have an account? <a href="/signup">Sign up</a></p>
+        </form> -->
+
+        <form class="login-form">
+            <!-- Remove the action and method attributes -->
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
             </div>
             <button type="submit" class="login-btn">Login</button>
             <p class="signup-link">Don't have an account? <a href="/signup">Sign up</a></p>
         </form>
+
+    </div>
+
+    <!-- Popup Modal Structure -->
+    <div id="popup-modal" class="modal">
+        <div class="modal-content animate__animated animate__bounceIn">
+            <span class="close-btn">&times;</span>
+            <div class="modal-body">
+                <div class="modal-icon error-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M12,17c-0.55,0-1-0.45-1-1v-4c0-0.55,0.45-1,1-1s1,0.45,1,1v4C13,16.55,12.55,17,12,17z M13,9c0,0.55-0.45,1-1,1s-1-0.45-1-1s0.45-1,1-1S13,8.45,13,9z"/>
+                    </svg>
+                </div>
+                <h3 id="popup-title">Error</h3>
+                <p id="popup-message">Invalid credentials. Please try again.</p>
+                <button id="popup-confirm" class="modal-btn">OK</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Function to hide error messages when typing in the input fields
-        document.getElementById('email').addEventListener('input', function() {
-            const emailError = document.getElementById('email-error');
-            if (emailError) {
-                emailError.style.display = 'none'; // Hide the email error message
-            }
-        });
-
-        document.getElementById('password').addEventListener('input', function() {
-            const passwordError = document.getElementById('password-error');
-            if (passwordError) {
-                passwordError.style.display = 'none'; // Hide the password error message
-            }
-        });
-       // Prevent back button after logout
-       if (window.history && window.history.pushState) {
-            window.history.pushState(null, null, '/login');
-            window.addEventListener('popstate', function () {
-                window.history.pushState(null, null, '/login');
-            });
+    
+    // Function to show popup
+    function showPopup(title, message, isError = true) {
+        const modal = document.getElementById('popup-modal');
+        const titleEl = document.getElementById('popup-title');
+        const messageEl = document.getElementById('popup-message');
+        const icon = document.querySelector('.modal-icon');
+        
+        titleEl.textContent = title;
+        messageEl.textContent = message;
+        
+        if (isError) {
+            icon.className = 'modal-icon error-icon';
+        } else {
+            icon.className = 'modal-icon success-icon';
         }
+        
+        modal.style.display = 'block';
+        
+        // Close modal when clicking X or OK button
+        document.querySelector('.close-btn').onclick = function() {
+            modal.style.display = 'none';
+        }
+        
+        document.getElementById('popup-confirm').onclick = function() {
+            modal.style.display = 'none';
+        }
+        
+        // Close when clicking outside modal
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    }
 
+    // Check for error messages from URL parameters
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+        
+        if (error) {
+            showPopup('Login Failed', error);
+        }
+    });
+
+    // Prevent form submission and handle with fetch API
+    document.querySelector('.login-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const email = formData.get('email');
+        const password = formData.get('password');
+        
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            });
+            
+            if (response.redirected) {
+                // Check if the redirect URL contains an error
+                const redirectUrl = new URL(response.url);
+                if (redirectUrl.searchParams.has('error')) {
+                    const error = redirectUrl.searchParams.get('error');
+                    showPopup('Login Failed', error);
+                } else {
+                    window.location.href = response.url; // Successful login
+                }
+            } else {
+                const data = await response.json();
+                if (data.message) {
+                    showPopup('Login Failed', data.message);
+                }
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showPopup('Error', 'An unexpected error occurred');
+        }
+    });
+
+    // Prevent back button after logout
+    if (window.history && window.history.pushState) {
+        window.history.pushState(null, null, '/login');
+        window.addEventListener('popstate', function () {
+            window.history.pushState(null, null, '/login');
+        });
+    }
     </script>
 </body>
 </html>

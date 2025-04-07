@@ -6,9 +6,12 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Signup</title>
+    <title>Signup | Book Cloud</title>
     <link rel="stylesheet" href="/css/signup.css">
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    
 </head>
 <body>
     <!-- Video Background -->
@@ -17,10 +20,17 @@
         Your browser does not support the video tag.
     </video>
 
-    <!-- Preloader -->
+    <!-- Spherical Waves Preloader -->
     <div id="preloader">
+        <div class="wave-sphere">
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+        </div>
         <h1>Book Cloud</h1>
-        <p>Loading your book store<span class="dots"></span></p>
+        <p>Loading your book store</p>
     </div>
 
     <!-- Success/Error Pop-up -->
@@ -40,19 +50,22 @@
             <h2>Signup</h2>
             <form id="signupForm">
                 <input type="text" id="name" name="name" placeholder="Name" required>
-                <span id="nameError" class="error-message"></span><br>
+                <span id="nameError" class="error-message"></span>
 
                 <input type="email" id="email" name="email" placeholder="Email" required>
-                <span id="emailError" class="error-message"></span><br>
+                <span id="emailError" class="error-message"></span>
 
                 <input type="password" id="password" name="password" placeholder="Password" required>
-                <span id="passwordError" class="error-message"></span><br>
+                <span id="passwordError" class="error-message"></span>
 
                 <p class="or-divider">- OR -</p>
 
                 <div class="social-buttons">
-                    <a href="/api/auth/google">
+                    <a href="/api/auth/google" class="social-btn google">
                         <i class="fab fa-google"></i> Sign up with Google
+                    </a>
+                    <a href="/api/auth/apple" class="social-btn apple">
+                        <i class="fab fa-apple"></i> Sign up with Apple
                     </a>
                 </div>
 
@@ -63,69 +76,228 @@
     </div>
 
     <script>
-        // Hide Preloader after 3 seconds
-        window.onload = function () {
-            setTimeout(function () {
-                document.getElementById("preloader").style.display = "none";
+        // GSAP Animations for Spherical Waves Preloader
+        document.addEventListener('DOMContentLoaded', () => {
+            // Preloader animations
+            gsap.to("#preloader h1", {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                delay: 0.5,
+                ease: "power2.out"
+            });
+
+            gsap.to("#preloader p", {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                delay: 0.8,
+                ease: "power2.out"
+            });
+
+            // Hide preloader after 3 seconds with animation
+            setTimeout(() => {
+                gsap.to("#preloader", {
+                    opacity: 0,
+                    duration: 0.5,
+                    ease: "power2.in",
+                    onComplete: () => {
+                        document.getElementById("preloader").style.display = "none";
+                        
+                        // Animate main content in
+                        gsap.to(".container", {
+                            opacity: 1,
+                            duration: 0.8,
+                            ease: "power2.out"
+                        });
+
+                        gsap.to(".left-side", {
+                            x: 0,
+                            duration: 0.8,
+                            ease: "back.out(1.2)",
+                            delay: 0.3
+                        });
+
+                        gsap.to(".right-side", {
+                            x: 0,
+                            duration: 0.8,
+                            ease: "back.out(1.2)",
+                            delay: 0.3
+                        });
+                    }
+                });
             }, 3000);
-        };
 
+            // Form input animations
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('focus', () => {
+                    gsap.to(input, {
+                        scale: 1.02,
+                        duration: 0.2,
+                        ease: "power1.out"
+                    });
+                });
+                
+                input.addEventListener('blur', () => {
+                    gsap.to(input, {
+                        scale: 1,
+                        duration: 0.2,
+                        ease: "power1.out"
+                    });
+                });
+            });
 
-        // In views/signup.ejs, update the form submission script:
-document.getElementById("signupForm").addEventListener("submit", async function(event) {
-    event.preventDefault(); // Prevent page reload
+            // Button hover animation
+            const signupBtn = document.querySelector('.signup-btn');
+            signupBtn.addEventListener('mouseenter', () => {
+                gsap.to(signupBtn, {
+                    scale: 1.03,
+                    duration: 0.2,
+                    ease: "power1.out"
+                });
+            });
+            
+            signupBtn.addEventListener('mouseleave', () => {
+                gsap.to(signupBtn, {
+                    scale: 1,
+                    duration: 0.2,
+                    ease: "power1.out"
+                });
+            });
 
-    let name = document.getElementById("name").value.trim();
-    let email = document.getElementById("email").value.trim();
-    let password = document.getElementById("password").value.trim();
-
-    // Clear previous errors
-    document.getElementById("nameError").textContent = "";
-    document.getElementById("emailError").textContent = "";
-    document.getElementById("passwordError").textContent = "";
-
-    let isValid = true;
-
-    // Name Validation
-    if (name.length < 3) {
-        document.getElementById("nameError").textContent = "Name must be at least 3 characters.";
-        isValid = false;
-    }
-
-    // Email Validation (Basic Regex Check)
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailPattern.test(email)) {
-        document.getElementById("emailError").textContent = "Enter a valid email.";
-        isValid = false;
-    }
-
-    // Password Validation
-    if (password.length < 6) {
-        document.getElementById("passwordError").textContent = "Password must be at least 6 characters.";
-        isValid = false;
-    }
-
-    if (!isValid) return; // Stop submission if validation fails
-
-    try {
-        let response = await fetch("/api/auth/signup", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, email, password })
+            // Social button hover animations
+            const socialBtns = document.querySelectorAll('.social-btn');
+            socialBtns.forEach(btn => {
+                btn.addEventListener('mouseenter', () => {
+                    gsap.to(btn, {
+                        y: -3,
+                        duration: 0.2,
+                        ease: "power1.out"
+                    });
+                });
+                
+                btn.addEventListener('mouseleave', () => {
+                    gsap.to(btn, {
+                        y: 0,
+                        duration: 0.2,
+                        ease: "power1.out"
+                    });
+                });
+            });
         });
 
-        let data = await response.json();
+        // Form validation and submission
+        document.getElementById("signupForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
 
-        if (!data.success) {
-            showPopup(data.message, "error");
-        } else {
-            // Redirect to OTP page on successful signup
-            window.location.href = data.redirect;
+            let name = document.getElementById("name").value.trim();
+            let email = document.getElementById("email").value.trim();
+            let password = document.getElementById("password").value.trim();
+
+            // Clear previous errors
+            document.getElementById("nameError").textContent = "";
+            document.getElementById("emailError").textContent = "";
+            document.getElementById("passwordError").textContent = "";
+
+            let isValid = true;
+
+            // Name Validation
+            if (name.length < 3) {
+                document.getElementById("nameError").textContent = "Name must be at least 3 characters.";
+                gsap.fromTo("#nameError", 
+                    { opacity: 0, y: -10 },
+                    { opacity: 1, y: 0, duration: 0.3 }
+                );
+                isValid = false;
+            }
+
+            // Email Validation
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailPattern.test(email)) {
+                document.getElementById("emailError").textContent = "Enter a valid email.";
+                gsap.fromTo("#emailError", 
+                    { opacity: 0, y: -10 },
+                    { opacity: 1, y: 0, duration: 0.3 }
+                );
+                isValid = false;
+            }
+
+            // Password Validation
+            if (password.length < 6) {
+                document.getElementById("passwordError").textContent = "Password must be at least 6 characters.";
+                gsap.fromTo("#passwordError", 
+                    { opacity: 0, y: -10 },
+                    { opacity: 1, y: 0, duration: 0.3 }
+                );
+                isValid = false;
+            }
+
+            if (!isValid) {
+                // Shake form on validation error
+                gsap.to("#signupForm", {
+                    x: [-5, 5, -5, 5, 0],
+                    duration: 0.4,
+                    ease: "power1.out"
+                });
+                return;
+            }
+
+            try {
+                let response = await fetch("/api/auth/signup", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, email, password })
+                });
+
+                let data = await response.json();
+
+                if (!data.success) {
+                    showPopup(data.message, "error");
+                } else {
+                    // Animate success before redirect
+                    gsap.to(".container", {
+                        opacity: 0,
+                        y: 50,
+                        duration: 0.5,
+                        onComplete: () => {
+                            window.location.href = data.redirect;
+                        }
+                    });
+                }
+            } catch (error) {
+                showPopup("Something went wrong. Please try again.", "error");
+            }
+        });
+
+        // Popup function
+        function showPopup(message, type) {
+            const popup = document.getElementById("successPopup");
+            const popupMessage = document.getElementById("popupMessage");
+            
+            popupMessage.textContent = message;
+            popup.style.background = type === "error" ? "#e74c3c" : "#2ecc71";
+            popup.classList.add("show");
+            
+            // Animate popup
+            gsap.from(popup, {
+                x: 150,
+                duration: 0.5,
+                ease: "back.out(1.2)"
+            });
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                gsap.to(popup, {
+                    x: 150,
+                    duration: 0.5,
+                    ease: "back.in(1.2)",
+                    onComplete: () => {
+                        popup.classList.remove("show");
+                    }
+                });
+            }, 3000);
         }
-    } catch (error) {
-        showPopup("Something went wrong. Please try again.", "error");
-    }
-});
     </script>
 </body>
 </html>

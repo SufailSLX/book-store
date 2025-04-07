@@ -1,105 +1,248 @@
-body {
-    font-family: 'Poppins', sans-serif;
+:root {
+    --primary-dark: #7a4e2a;
+    --primary-light: #cfa45f;
+    --text-color: #333;
+    --light-text: #fff;
+    --error-color: #e74c3c;
+    --success-color: #2ecc71;
+}
+
+* {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8)), url('/assets/login-bg.jpg');
-    background-size: cover;
-    background-position: center;
-    color: #fff;
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+}
+
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 .login-container {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 2rem;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 2.5rem;
     border-radius: 15px;
-    /* width: 100%; */
-    /* max-width: 400px; */
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 450px;
+    transform: translateY(0);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+}
+
+.login-header {
     text-align: center;
-    backdrop-filter: blur(8px);
-    border: none; 
-    box-shadow: none; 
+    margin-bottom: 2rem;
 }
 
 .login-header h1 {
-    font-size: 2rem;
+    font-size: 2.2rem;
+    color: var(--primary-dark);
     margin-bottom: 0.5rem;
-    color: #fff;
+    font-weight: 700;
 }
 
 .login-header p {
-    font-size: 0.9rem;
-    color: #ddd;
+    color: var(--text-color);
+    font-size: 0.95rem;
 }
 
 .login-form {
-    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
 }
 
 .form-group {
-    margin-bottom: 1rem;
-    text-align: left;
+    margin-bottom: 1.5rem;
+    position: relative;
 }
 
 .form-group label {
     display: block;
     margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-    color: #ddd;
+    color: var(--text-color);
+    font-weight: 600;
 }
 
 .form-group input {
     width: 100%;
-    padding: 0.8rem;
-    border: none;
-    border-radius: 5px;
-    background: rgba(255, 255, 255, 0.2);
-    color: #fff;
+    padding: 12px 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
     font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.8);
 }
 
-.form-group input::placeholder {
-    color: #ccc;
+.form-group input:focus {
+    border-color: var(--primary-light);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(207, 164, 95, 0.2);
 }
 
 .login-btn {
-    width: 100%;
-    padding: 0.8rem;
+    background: linear-gradient(to right, var(--primary-dark), var(--primary-light));
+    color: white;
     border: none;
-    border-radius: 5px;
-    background: #2575fc;
-    color: #fff;
+    padding: 12px;
+    border-radius: 8px;
     font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: all 0.3s ease;
+    margin-top: 0.5rem;
 }
 
 .login-btn:hover {
-    background: #1b5bbf;
+    background: linear-gradient(to right, var(--primary-dark), #d8b267);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(122, 78, 42, 0.3);
 }
 
 .signup-link {
-    margin-top: 1rem;
-    font-size: 0.9rem;
-    color: #ddd;
+    text-align: center;
+    margin-top: 1.5rem;
+    color: var(--text-color);
 }
 
 .signup-link a {
-    color: #2575fc;
+    color: var(--primary-dark);
     text-decoration: none;
+    font-weight: 600;
     transition: color 0.3s ease;
 }
 
 .signup-link a:hover {
-    color: #1b5bbf;
+    color: var(--primary-light);
+    text-decoration: underline;
 }
 
-.field-error {
-    color: #ff6f61;
-    font-size: 0.8rem;
-    margin-top: 0.25rem;
-    display: block;
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 2rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.close-btn {
+    position: absolute;
+    right: 1.5rem;
+    top: 1rem;
+    font-size: 1.5rem;
+    color: #aaa;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+    color: #333;
+}
+
+.modal-body {
+    text-align: center;
+    padding: 1rem;
+}
+
+.modal-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.error-icon {
+    color: var(--error-color);
+}
+
+.success-icon {
+    color: var(--success-color);
+}
+
+.modal-icon svg {
+    width: 50px;
+    height: 50px;
+}
+
+#popup-title {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+}
+
+#popup-message {
+    color: #666;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+.modal-btn {
+    background: linear-gradient(to right, var(--primary-dark), var(--primary-light));
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.modal-btn:hover {
+    background: linear-gradient(to right, var(--primary-dark), #d8b267);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(122, 78, 42, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .login-container {
+        padding: 1.5rem;
+        margin: 0 1rem;
+    }
+    
+    .login-header h1 {
+        font-size: 1.8rem;
+    }
 }
