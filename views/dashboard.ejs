@@ -1,60 +1,201 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
-        <meta http-equiv="Pragma" content="no-cache">
-        <meta http-equiv="Expires" content="0">
-        
-        <title>Dashboard</title>
-        <link rel="stylesheet" href="/css/dashboard.css">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
-        <script src="https://code.iconify.design/iconify-icon/0.0.2/iconify-icon.min.js"></script>
-        <!-- Font Awesome CDN -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <!-- GSAP -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js"></script>
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+    <script src="https://code.iconify.design/iconify-icon/0.0.2/iconify-icon.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js"></script>
+    <style>
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            overflow: auto;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #7a4e2a, #cfa45f);
+            margin: 15% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: modalFadeIn 0.3s;
+        }
+
+        @keyframes modalFadeIn {
+            from {opacity: 0; transform: translateY(-50px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            color: #fff;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover {
+            color: #ff0000;
+        }
+
+        /* Wishlist Icon Styles */
+        .add-to-wishlist {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-to-wishlist:hover {
+            color: #cfa45f;
+        }
+
+        .add-to-wishlist.in-wishlist {
+            color: red;
+            font-variation-settings: 'FILL' 1;
+        }
+
+        .add-to-wishlist.in-wishlist:hover {
+            color: #ff6b6b;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 992px) {
+            .intro {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .intro-content {
+                max-width: 100%;
+                margin-bottom: 40px;
+            }
+            
+            .about-container {
+                flex-direction: column;
+            }
+            
+            .about-text {
+                max-width: 100%;
+            }
+            
+            #search-bar {
+                width: 80%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 20px;
+            }
+            
+            .intro-title {
+                font-size: 36px;
+            }
+            
+            .intro-img img {
+                max-width: 100%;
+            }
+            
+            .about-us {
+                margin: 20px;
+            }
+            
+            #book-list {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+            
+            .modal-content {
+                width: 90%;
+                margin: 30% auto;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .intro {
+                padding: 40px 20px;
+            }
+            
+            #search-bar {
+                width: 90%;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                margin: 40% auto;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
 <body>
-<!-- NAVBAR  -->
- 
+    <!-- NAVBAR -->
     <nav class="navbar">
         <h2>Book Cloud</h2>
-        <!-- <ul class="nav-links">
-            <li><a href="#" class="active">Home</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Books</a></li>
-            <li><a href="#">Contact</a></li>
-        </ul> -->
         <div class="nav-icons">
             <a href="/api/wishlist" class="wishlist-icon">
                 <span class="material-symbols-outlined">favorite</span>
             </a>
             <span id="logoutButton" class="material-symbols-outlined">logout</span>
         </div>
-
-        <!-- <div class="hamburger">
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
-        </div> -->
     </nav>
 
-
-    <!-- <button class="logout-btn">
-        <span class="material-symbols-outlined">logout</span>
-    </button> -->
-    <!-- <button id="logoutButton">Logout</button> -->
-    
     <div class="line"></div>
-    <!-------------------------------------------------------------------------->
+    
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Confirm Logout</h2>
+            <p>Are you sure you want to logout?</p>
+            <div class="modal-buttons">
+                <button id="confirmLogout" class="modal-btn confirm">Logout</button>
+                <button id="cancelLogout" class="modal-btn cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
 
-<!-- INTRO  -->
+    <!-- Wishlist Success Modal -->
+    <div id="wishlistModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Success!</h2>
+            <p id="wishlistMessage">Book added to wishlist successfully!</p>
+            <button id="closeWishlistModal" class="modal-btn confirm">OK</button>
+        </div>
+    </div>
+
+    <!-- INTRO -->
     <div class="intro">
         <div class="intro-content">
             <h1 class="intro-title">Welcome to <span>Book Cloud</span></h1>
@@ -66,50 +207,32 @@
         </div>
     </div>
 
-<!-- ABOUT  -->
-<!-------------------------------------------------------------------------->
-
-<!-------------------------------------------------------------------------->
-<section class="about-us">
-    <div class="about-container">
-        <!-- Image Section -->
-        <div class="about-image">
-            <img src="/assets/logo.png" alt="About Us Image">
-        </div>
-
-        <!-- Text Section -->
-        <div class="about-text">
-            <h2 class="alkatra">About Us</h2>
-            <p class="pacifico-regular">At <strong>Book Cloud</strong>, we believe in the transformative power of books. Our mission is to bring the world of literature to your fingertips, anytime, anywhere.</p>
-
-            <!-- Mission Statement -->
-            <div class="mission-statement">
-                <h3>Our Mission</h3>
-                <p>To create a seamless digital reading experience that inspires, educates, and entertains readers of all ages.</p>
+    <!-- ABOUT -->
+    <section class="about-us">
+        <div class="about-container">
+            <div class="about-image">
+                <img src="/assets/logo.png" alt="About Us Image">
             </div>
-
-            <!-- Fun Fact -->
-            <div class="fun-fact">
-                <h3>Did You Know?</h3>
-                <p>The longest novel ever written is <em>À la recherche du temps perdu</em> by Marcel Proust, with over 1.2 million words!</p>
+            <div class="about-text">
+                <h2 class="alkatra">About Us</h2>
+                <p class="pacifico-regular">At <strong>Book Cloud</strong>, we believe in the transformative power of books.</p>
+                <div class="mission-statement">
+                    <h3>Our Mission</h3>
+                    <p>To create a seamless digital reading experience that inspires, educates, and entertains readers of all ages.</p>
+                </div>
+                <div class="fun-fact">
+                    <h3>Did You Know?</h3>
+                    <p>The longest novel ever written is <em>À la recherche du temps perdu</em> by Marcel Proust, with over 1.2 million words!</p>
+                </div>
             </div>
         </div>
-    </div>
-</section>
-<!-------------------------------------------------------------------------->
+    </section>
 
-<!-- Search Bar -->
-<!-- <div class="search-container">
-        <input type="text" id="search-bar" placeholder="Search books by title or author..." onkeyup="searchBooks()">
-    </div> -->
-
+    <!-- Search Bar -->
     <div class="search-container">
         <input type="text" id="search-bar" placeholder="Search books by title or author..." onkeyup="searchBooks()">
-        <!-- <button class="search-btn">Search</button> -->
     </div>
-    
-    <!-------------------------------------------------------------------------->
-    
+
     <!-- Book List -->
     <div id="book-list">
         <% books.slice(0, 5).forEach(book => { %>
@@ -121,7 +244,7 @@
                     <p><%= book.description %></p>
                     <div class="book-buttons">
                         <a href="/read/<%= book._id %>" class="read-btn">Click to Read</a>
-                        <button class="add-to-wishlist" data-book-id="<%= book._id %>">
+                        <button class="add-to-wishlist <%= book.inWishlist ? 'in-wishlist' : '' %>" data-book-id="<%= book._id %>">
                             <span class="material-symbols-outlined">favorite</span>
                         </button>
                     </div>
@@ -135,84 +258,80 @@
         <button id="next-btn" onclick="nextBooks()">Next</button>
     </div>
 
-
-<!-- FOOTER  -->
-
-  <!-- FOOTER -->
-<footer class="footer">
-    <div class="footer-container">
-        <!-- Quick Links -->
-        <div class="footer-section">
-            <h3>Quick Links</h3>
-            <ul>
-                <li><a href="/books">Browse Books</a></li>
-                <li><a href="/about">About Us</a></li>
-                <li><a href="/faq">FAQ</a></li>
-                <li><a href="/privacy-policy">Privacy Policy</a></li>
-            </ul>
-        </div>
-
-        <!-- Contact Us -->
-        <div class="footer-section">
-            <h3>Contact Us</h3>
-            <p>Email: <a href="mailto:webconnect.slx@gmail.com">webconnect.slx@gmail.com</a></p>
-            <p>Phone: +1 (123) 456-7890</p>
-            <p>Address: 123 Book Street, Knowledge City, Earth</p>
-        </div>
-
-        <!-- Newsletter Subscription -->
-        <div class="footer-section">
-            <h3>Subscribe to Our Newsletter</h3>
-            <form class="newsletter-form">
-                <input type="email" placeholder="Enter your email" required>
-                <button type="submit">Subscribe</button>
-            </form>
-            <p>Get the latest updates on new books, promotions, and more!</p>
-        </div>
-
-        <!-- Social Media Links -->
-        <div class="footer-section">
-            <h3>Follow Us</h3>
-            <div class="social-links">
-                <a href="https://instagram.com/bookcloud" target="_blank" aria-label="Instagram">
-                    <i class="fab fa-instagram"></i>
-                </a>
-                <a href="https://linkedin.com/company/bookcloud" target="_blank" aria-label="LinkedIn">
-                    <i class="fab fa-linkedin-in"></i>
-                </a>
-                <a href="https://twitter.com/bookcloud" target="_blank" aria-label="X">
-                    <i class="fab fa-x-twitter"></i>
-                </a>
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="/books">Browse Books</a></li>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/faq">FAQ</a></li>
+                    <li><a href="/privacy-policy">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p>Email: <a href="mailto:webconnect.slx@gmail.com">webconnect.slx@gmail.com</a></p>
+                <p>Phone: +1 (123) 456-7890</p>
+                <p>Address: 123 Book Street, Knowledge City, Earth</p>
+            </div>
+            <div class="footer-section">
+                <h3>Subscribe to Our Newsletter</h3>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Enter your email" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+                <p>Get the latest updates on new books, promotions, and more!</p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="https://instagram.com/bookcloud" target="_blank" aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://linkedin.com/company/bookcloud" target="_blank" aria-label="LinkedIn">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="https://twitter.com/bookcloud" target="_blank" aria-label="X">
+                        <i class="fab fa-x-twitter"></i>
+                    </a>
+                </div>
             </div>
         </div>
-    </div>
-
-    <!-- Copyright -->
-    <div class="footer-bottom">
-        <p>© 2025 Bookstore. All rights reserved.</p>
-    </div>
-</footer>
-
-
-
-<!-- -------------------------------- -->
-    <!-- Toast Notification -->
-    <div id="toast" class="toast">Book added to wishlist!</div>
+        <div class="footer-bottom">
+            <p>© 2025 Bookstore. All rights reserved.</p>
+        </div>
+    </footer>
 
     <script>
         let allBooks = <%- JSON.stringify(books) %>;
         let currentPage = 0;
         const booksPerPage = 3;
-        let filteredBooks = [...allBooks]; // Stores filtered books from search
+        let filteredBooks = [...allBooks];
 
-        function renderBooks() {
+        // Check if book is in wishlist
+        async function checkWishlistStatus(bookId) {
+            try {
+                const response = await fetch(`/api/wishlist/check?bookId=${bookId}`);
+                const data = await response.json();
+                return data.inWishlist;
+            } catch (error) {
+                console.error('Error checking wishlist:', error);
+                return false;
+            }
+        }
+
+        // Render books with wishlist status
+        async function renderBooks() {
             let bookList = document.getElementById("book-list");
             bookList.innerHTML = "";
             let start = currentPage * booksPerPage;
             let end = start + booksPerPage;
             let paginatedBooks = filteredBooks.slice(start, end);
 
-            paginatedBooks.forEach(book => {
+            for (const book of paginatedBooks) {
+                const inWishlist = await checkWishlistStatus(book._id);
                 let bookHtml = `
                     <div class="book-card">
                         <img src="${book.image ? book.image : '/assets/default-book.png'}" alt="Book Cover">
@@ -222,7 +341,7 @@
                             <p>${book.description}</p>
                             <div class="book-buttons">
                                 <a href="/read/${book._id}" class="read-btn">Click to Read</a>
-                                <button class="add-to-wishlist" data-book-id="${book._id}">
+                                <button class="add-to-wishlist ${inWishlist ? 'in-wishlist' : ''}" data-book-id="${book._id}">
                                     <span class="material-symbols-outlined">favorite</span>
                                 </button>
                             </div>
@@ -230,7 +349,7 @@
                     </div>
                 `;
                 bookList.innerHTML += bookHtml;
-            });
+            }
 
             attachWishlistListeners();
             document.getElementById("prev-btn").disabled = currentPage === 0;
@@ -257,7 +376,7 @@
                 book.title.toLowerCase().includes(input) || 
                 book.author.toLowerCase().includes(input)
             );
-            currentPage = 0; // Reset to first page
+            currentPage = 0;
             renderBooks();
         }
 
@@ -265,75 +384,110 @@
             document.querySelectorAll(".add-to-wishlist").forEach(button => {
                 button.addEventListener("click", async (event) => {
                     const bookId = event.currentTarget.getAttribute("data-book-id");
+                    const isInWishlist = button.classList.contains('in-wishlist');
+                    
                     try {
-                        const response = await fetch("/api/wishlist/add", {
+                        const endpoint = isInWishlist ? "/api/wishlist/remove" : "/api/wishlist/add";
+                        const response = await fetch(endpoint, {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({ bookId })
                         });
                         const data = await response.json();
+                        
                         if (data.success) {
-                            showToast("Book added to wishlist!");
+                            button.classList.toggle('in-wishlist');
+                            showToast(isInWishlist ? "Book removed from wishlist!" : "Book added to wishlist!");
                         } else {
                             showToast("Error: " + data.error, true);
                         }
                     } catch (error) {
-                        console.error("Error adding book:", error);
+                        console.error("Error updating wishlist:", error);
+                        // showToast("An error occurred", true);
                     }
                 });
             });
         }
 
         function showToast(message, isError = false) {
-            let toast = document.getElementById("toast");
-            toast.innerText = message;
-            toast.style.backgroundColor = isError ? "#D32F2F" : "#4CAF50";
-            toast.classList.add("show");
-
+            const wishlistMessage = document.getElementById('wishlistMessage');
+            wishlistMessage.textContent = message;
+            
+            const modalContent = wishlistModal.querySelector('.modal-content');
+            modalContent.style.background = isError 
+                ? 'linear-gradient(135deg, #D32F2F, #F44336)' 
+                : 'linear-gradient(135deg, #4CAF50, #8BC34A)';
+            
+            wishlistModal.style.display = 'block';
+            
             setTimeout(() => {
-                toast.classList.remove("show");
+                wishlistModal.style.display = 'none';
             }, 3000);
         }
 
-           // Logout button functionality
-           document.getElementById('logoutButton').addEventListener('click', async () => {
+        // Modal functionality
+        const logoutModal = document.getElementById('logoutModal');
+        const wishlistModal = document.getElementById('wishlistModal');
+        const closeButtons = document.querySelectorAll('.close-modal');
+        
+        document.getElementById('logoutButton').addEventListener('click', () => {
+            logoutModal.style.display = 'block';
+        });
+        
+        document.getElementById('confirmLogout').addEventListener('click', async () => {
             try {
                 const response = await fetch('/api/auth/logout', {
                     method: 'GET',
-                    credentials: 'include' // Include cookies
+                    credentials: 'include'
                 });
-
                 if (response.ok) {
-                    window.location.href = '/login'; // Redirect to login page
-                } else {
-                    console.error('Logout failed');
+                    window.location.href = '/login';
                 }
             } catch (error) {
                 console.error('Error during logout:', error);
             }
         });
+        
+        document.getElementById('cancelLogout').addEventListener('click', () => {
+            logoutModal.style.display = 'none';
+        });
+        
+        document.getElementById('closeWishlistModal').addEventListener('click', () => {
+            wishlistModal.style.display = 'none';
+        });
+        
+        closeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                this.closest('.modal').style.display = 'none';
+            });
+        });
+        
+        window.addEventListener('click', (event) => {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        });
 
-        // Prevent back button after logout
+        // Prevent caching and back-button navigation
         if (window.history && window.history.pushState) {
             window.history.pushState(null, null, '/api/auth/dashboard');
-            window.addEventListener('popstate', function () {
+            window.addEventListener('popstate', function() {
                 window.history.pushState(null, null, '/api/auth/dashboard');
             });
         }
 
-         // Prevent caching of the dashboard page
-         window.onpageshow = function(event) {
+        window.onpageshow = function(event) {
             if (event.persisted) {
-                window.location.reload(); // Reload the page if it was restored from the cache
+                window.location.reload();
             }
         };
 
-        // Prevent back-button navigation to login page
         history.pushState(null, document.title, location.href);
         window.addEventListener('popstate', function(event) {
             history.pushState(null, document.title, location.href);
         });
 
+        // Initial render
         renderBooks();
     </script>
     <script src="/js/gsap.js"></script>

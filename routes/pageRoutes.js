@@ -12,8 +12,8 @@ router.get('/', ensureGuest, (req, res) => {
 });
 
 // Signup Page (Public)
-// router.get('/signup', ensureGuest, (req, res) => {
-router.get('/', ensureGuest, (req, res) => {
+router.get('/signup', ensureGuest, (req, res) => {
+// router.get('/', ensureGuest, (req, res) => {
     res.render('signup');
 });
 

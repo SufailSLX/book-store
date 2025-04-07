@@ -24,26 +24,9 @@ const sendOTPEmail = async (email, otp) => {
                 <p>This OTP is valid for 10 minutes.</p>
             `,
         });
-        console.log(`✅ OTP email sent to ${email}`);
+        console.log(`✅ OTP email sent to ${email} with OTP: ${otp}`);
     } catch (error) {
         console.error("❌ Error sending OTP email:", error);
-    }
-};
-
-const sendVerificationEmail = async (email) => {
-    const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    const verificationUrl = `${process.env.BASE_URL}/verify/${token}`;
-
-    try {
-        await transporter.sendMail({
-            from: `"Book Cloud" <${process.env.EMAIL_USER}>`,
-            to: email,
-            subject: "Verify Your Email",
-            html: `<p>Please click <a href="${verificationUrl}">here</a> to verify your email.</p>`,
-        });
-        console.log(`✅ Verification email sent to ${email}`);
-    } catch (error) {
-        console.error("❌ Error sending verification email:", error);
     }
 };
 

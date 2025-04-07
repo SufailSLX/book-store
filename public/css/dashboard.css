@@ -14,7 +14,6 @@ body {
     position: relative;
 }
 
-/* Animated Background Effect (Inspired by grok.com) */
 body::before {
     content: '';
     position: absolute;
@@ -291,7 +290,6 @@ body::before {
 }
 
 /* Footer */
-/* Footer */
 .footer {
     background: rgba(0, 0, 0, 0.2);
     padding: 40px;
@@ -352,18 +350,18 @@ body::before {
 
 .social-links {
     display: flex;
-    gap: 20px; /* Increased gap for better spacing */
+    gap: 20px;
 }
 
 .social-links a {
-    font-size: 28px; /* Slightly larger icons */
+    font-size: 28px;
     color: #fff;
-    transition: color 0.3s ease, transform 0.3s ease; /* Added transform for hover effect */
+    transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .social-links a:hover {
     color: #cfa45f;
-    transform: scale(1.2); /* Slight scale-up on hover */
+    transform: scale(1.2);
 }
 
 .footer-bottom {
@@ -372,19 +370,210 @@ body::before {
     border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* Toast Notification */
-.toast {
+/* Modal Styles */
+.modal {
+    display: none;
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    padding: 15px 25px;
-    border-radius: 10px;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    overflow: auto;
+}
+
+.modal-content {
+    background: linear-gradient(135deg, #7a4e2a, #cfa45f);
+    margin: 15% auto;
+    padding: 30px;
+    border-radius: 15px;
+    width: 80%;
+    max-width: 500px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: modalFadeIn 0.3s;
+}
+
+@keyframes modalFadeIn {
+    from {opacity: 0; transform: translateY(-50px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 24px;
     color: #fff;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    cursor: pointer;
+    transition: color 0.3s;
 }
 
-.toast.show {
-    opacity: 1;
+.close-modal:hover {
+    color: #ff0000;
 }
 
+/* Modal Buttons */
+.modal-btn {
+    padding: 10px 20px;
+    margin: 10px 5px 0;
+    border: none;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.modal-btn.confirm {
+    background: #fff;
+    color: #7a4e2a;
+}
+
+.modal-btn.confirm:hover {
+    background: #cfa45f;
+    color: #fff;
+}
+
+.modal-btn.cancel {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+.modal-btn.cancel:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.modal h2 {
+    color: #fff;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.modal p {
+    color: #fff;
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+    .intro {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .intro-content {
+        max-width: 100%;
+        margin-bottom: 40px;
+    }
+    
+    .about-container {
+        flex-direction: column;
+    }
+    
+    .about-text {
+        max-width: 100%;
+    }
+    
+    #search-bar {
+        width: 80%;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 15px 20px;
+    }
+    
+    .intro-title {
+        font-size: 36px;
+    }
+    
+    .intro-img img {
+        max-width: 100%;
+    }
+    
+    .about-us {
+        margin: 20px;
+    }
+    
+    #book-list {
+        grid-template-columns: 1fr;
+        padding: 20px;
+    }
+    
+    .book-card {
+        flex-direction: column;
+    }
+    
+    .book-card img {
+        height: auto;
+    }
+    
+    .book-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .add-to-wishlist {
+        align-self: center;
+    }
+    
+    .modal-content {
+        width: 90%;
+        margin: 30% auto;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar {
+        padding: 15px;
+    }
+    
+    .nav-icons {
+        gap: 15px;
+    }
+    
+    .intro {
+        padding: 40px 20px;
+    }
+    
+    .intro-title {
+        font-size: 28px;
+    }
+    
+    .intro-subtitle {
+        font-size: 16px;
+    }
+    
+    .intro-cta {
+        padding: 10px 20px;
+    }
+    
+    #search-bar {
+        width: 90%;
+    }
+    
+    .footer-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-content {
+        margin: 40% auto;
+        padding: 20px;
+    }
+}
+
+.in-wishlist {
+    color: red !important;
+    font-variation-settings: 'FILL' 1;
+}
