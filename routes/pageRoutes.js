@@ -27,16 +27,26 @@ router.get('/login', ensureGuest, (req, res) => {
 //     res.render("dashboard", { user: req.session.user });
 // });
 
-router.get('/dashboard', ensureAuth, async (req, res) => {
+// router.get('/dashboard', ensureAuth, async (req, res) => {
+//     try {
+//         const books = await Book.find().limit(5); // Fetch books
+//         res.render('dashboard', {
+//             user: req.session.user,
+//             books: books // Pass books to the template
+//         });
+//     } catch (error) {
+//         console.error('Error fetching books:', error);
+//         res.redirect('/login');
+//     }
+// });
+
+router.get('/api/auth/dashboard', ensureAuth, async (req, res) => {
     try {
-        const books = await Book.find().limit(5); // Fetch books
-        res.render('dashboard', {
-            user: req.session.user,
-            books: books // Pass books to the template
-        });
+        const books = await Book.find(); // Fetch all books
+        res.render('dashboard', { user: req.session.user, books }); // Pass books to EJS
     } catch (error) {
-        console.error('Error fetching books:', error);
-        res.redirect('/login');
+        console.error('❌ Error loading dashboard:', error);
+        res.status(500).send('Server Error');
     }
 });
 

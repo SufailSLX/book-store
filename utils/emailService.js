@@ -30,4 +30,4 @@ const sendOTPEmail = async (email, otp) => {
     }
 };
 
-module.exports = { sendOTPEmail, sendVerificationEmail };
+module.exports = { sendOTPEmail };
