@@ -1,10 +1,11 @@
+// // NEW 
 // const mongoose = require("mongoose");
 
 // const UserSchema = new mongoose.Schema({
 //     googleId: {
 //         type: String, 
 //         unique: true,
-//         sparse: true, // ✅ Allows `null` for non-Google users
+//         sparse: true,
 //     },
 //     name: {
 //         type: String,
@@ -25,17 +26,21 @@
 //         type: String,
 //         default: "user",
 //         enum: ["user", "admin"],
-//         default: "user",
 //     },
 //     isVerified: { 
 //         type: Boolean, 
 //         default: false 
 //     },
+//     otp: {
+//         type: String,
+//     },
+//     otpExpires: {
+//         type: Date,
+//     }
 // });
 
 // module.exports = mongoose.model("User", UserSchema);
 
-// NEW const 
 const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
@@ -67,6 +72,10 @@ const UserSchema = new mongoose.Schema({
     isVerified: { 
         type: Boolean, 
         default: false 
+    },
+    isBlocked: {
+        type: Boolean,
+        default: false
     },
     otp: {
         type: String,

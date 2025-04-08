@@ -3,81 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Manage Books</title>
-    <link rel="stylesheet" href="/css/admin.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/css/adminDashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <!-- Animated Background Elements -->
-    <div class="bg-circle circle-1"></div>
-    <div class="bg-circle circle-2"></div>
-    <div class="bg-circle circle-3"></div>
-    
-    <!-- Navbar -->
-    <nav class="navbar">
-        <h2 class="admin-title">Admin Panel</h2>
-        <a href="/admin" class="logout animated-button">Logout</a>
-    </nav>
-
-    <!-- Main Container -->
-    <div class="container">
-        <!-- Add Book Form -->
-        <div class="form-container floating-card">
-            <h2 class="form-title">Add a New Book</h2>
-            <form action="/admin/books/add" method="POST" enctype="multipart/form-data" class="book-form">
-                <div class="input-group">
-                    <input type="text" name="title" placeholder="Book Title" required class="form-input">
-                </div>
-                <div class="input-group">
-                    <input type="text" name="author" placeholder="Author" required class="form-input">
-                </div>
-                <div class="input-group">
-                    <textarea name="description" placeholder="Short Description" class="form-textarea"></textarea>
-                </div>
-                <div class="input-group">
-                    <textarea name="content" placeholder="Book Content" required class="form-textarea content-area"></textarea>
-                </div>
-                <div class="input-group file-input">
-                    <label for="book-image" class="file-label">
-                        <span class="file-button">Choose Cover Image</span>
-                        <span class="file-name">No file chosen</span>
-                    </label>
-                    <input type="file" name="image" id="book-image" accept="image/*" class="hidden-input">
-                </div>
-                <button type="submit" class="animated-button submit-button">
-                    <span class="button-text">Add Book</span>
-                    <span class="button-icon">+</span>
-                </button>
-            </form>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active" data-section="add-books"><i class="fas fa-book"></i> Add Books</a></li>
+                <li><a href="#" data-section="manage-users"><i class="fas fa-users"></i> Manage Users</a></li>
+                <li><a href="#" data-section="manage-admins"><i class="fas fa-user-shield"></i> Manage Admins</a></li>
+                <li><a href="/admin/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
         </div>
 
-        <!-- Available Books List -->
-        <div class="books-list floating-card">
-            <h3 class="books-title">Available Books</h3>
-            <ul class="book-items">
-                <% books.forEach(book => { %>
-                    <li class="book-item">
-                        <div class="book-details">
-                            <strong class="book-title"><%= book.title %></strong> 
-                            <span class="book-author">by <%= book.author %></span>
-                            <% if (book.image) { %>
-                                <img src="<%= book.image %>" alt="Book Cover" class="book-image">
-                            <% } %>
-                        </div>
-                        <!-- <form action="/api/auth/books/delete/<%= book._id %>" method="POST" class="delete-form"> -->
-                            <form action="/admin/books/delete/<%= book._id %>" method="POST">
-                            <button type="submit" class="animated-button delete-button">
-                                <span class="button-text">Delete</span>
-                                <span class="button-icon">×</span>
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h1>Admin Dashboard</h1>
+                <div class="user-info">
+                    <img src="https://via.placeholder.com/40" alt="Admin Avatar">
+                    <span><%= admin.email %></span>
+                </div>
+            </div>
+
+            <!-- Add Books Section -->
+            <div class="content-section active" id="add-books">
+                <div class="container">
+                    <!-- Add Book Form -->
+                    <div class="form-container floating-card">
+                        <h2 class="form-title">Add New Book</h2>
+                        <form action="/admin/books/add" method="POST" enctype="multipart/form-data" class="book-form">
+                            <div class="input-group">
+                                <input type="text" name="title" placeholder="Book Title" required class="form-input">
+                            </div>
+                            <div class="input-group">
+                                <input type="text" name="author" placeholder="Author" required class="form-input">
+                            </div>
+                            <div class="input-group">
+                                <textarea name="description" placeholder="Short Description" class="form-textarea"></textarea>
+                            </div>
+                            <div class="input-group">
+                                <textarea name="content" placeholder="Book Content" required class="form-textarea content-area"></textarea>
+                            </div>
+                            <div class="input-group file-input">
+                                <label for="book-image" class="file-label">
+                                    <span class="file-button">Choose Cover Image</span>
+                                    <span class="file-name">No file chosen</span>
+                                </label>
+                                <input type="file" name="image" id="book-image" accept="image/*" class="hidden-input">
+                            </div>
+                            <button type="submit" class="animated-button submit-button">
+                                <span class="button-text">Add Book</span>
+                                <span class="button-icon">+</span>
                             </button>
                         </form>
-                    </li>
-                <% }); %>
-            </ul>
+                    </div>
+
+                    <!-- Available Books List -->
+                    <div class="books-list floating-card">
+                        <h3 class="books-title">Available Books</h3>
+                        <ul class="book-items">
+                            <% books.forEach(book => { %>
+                                <li class="book-item">
+                                    <div class="book-details">
+                                        <strong class="book-title"><%= book.title %></strong> 
+                                        <span class="book-author">by <%= book.author %></span>
+                                        <% if (book.image) { %>
+                                            <img src="<%= book.image %>" alt="Book Cover" class="book-image">
+                                        <% } %>
+                                    </div>
+                                    <div>
+                                        <button class="animated-button edit-book-btn" style="background-color: #f39c12; margin-right: 10px;" 
+                                                data-id="<%= book._id %>" 
+                                                data-title="<%= book.title %>" 
+                                                data-author="<%= book.author %>" 
+                                                data-description="<%= book.description %>" 
+                                                data-content="<%= book.content %>">
+                                            <span class="button-text">Edit</span>
+                                            <span class="button-icon"><i class="fas fa-edit"></i></span>
+                                        </button>
+                                        <form action="/admin/books/delete/<%= book._id %>" method="POST" style="display: inline;">
+                                            <button type="submit" class="animated-button delete-button">
+                                                <span class="button-text">Delete</span>
+                                                <span class="button-icon">×</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </li>
+                            <% }); %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Book Modal -->
+            <div id="editBookModal" class="modal" style="display:none;">
+                <div class="modal-content floating-card">
+                    <span class="close-button" onclick="closeModal()">&times;</span>
+                    <h2>Edit Book</h2>
+                    <form id="editBookForm" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="bookId" id="edit-book-id">
+                        <div class="input-group">
+                            <input type="text" name="title" id="edit-title" placeholder="Book Title" required class="form-input">
+                        </div>
+                        <div class="input-group">
+                            <input type="text" name="author" id="edit-author" placeholder="Author" required class="form-input">
+                        </div>
+                        <div class="input-group">
+                            <textarea name="description" id="edit-description" placeholder="Short Description" class="form-textarea"></textarea>
+                        </div>
+                        <div class="input-group">
+                            <textarea name="content" id="edit-content" placeholder="Book Content" required class="form-textarea content-area"></textarea>
+                        </div>
+                        <div class="input-group file-input">
+                            <label for="edit-book-image" class="file-label">
+                                <span class="file-button">Update Cover Image</span>
+                                <span class="file-name">No file chosen</span>
+                            </label>
+                            <input type="file" name="image" id="edit-book-image" accept="image/*" class="hidden-input">
+                        </div>
+                        <button type="submit" class="animated-button submit-button">
+                            <span class="button-text">Update Book</span>
+                            <span class="button-icon"><i class="fas fa-save"></i></span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Manage Users Section -->
+            <div class="content-section" id="manage-users">
+                <!-- ... (keep existing users section code) ... -->
+            </div>
+
+            <!-- Manage Admins Section -->
+            <div class="content-section" id="manage-admins">
+                <!-- ... (keep existing admins section code) ... -->
+            </div>
         </div>
     </div>
 
-    <script src="/js/gsap.js"></script>
+    <script>
+        // Switch between sections
+        document.querySelectorAll('.sidebar-menu a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.getAttribute('data-section')) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all links
+                    document.querySelectorAll('.sidebar-menu a').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked link
+                    this.classList.add('active');
+                    
+                    // Hide all sections
+                    document.querySelectorAll('.content-section').forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    
+                    // Show the selected section
+                    const sectionId = this.getAttribute('data-section');
+                    document.getElementById(sectionId).classList.add('active');
+                }
+            });
+        });
+
+        // Update file input label
+        document.querySelectorAll('.hidden-input').forEach(input => {
+            input.addEventListener('change', function() {
+                const fileName = this.files[0] ? this.files[0].name : 'No file chosen';
+                const fileLabel = this.closest('.file-input').querySelector('.file-name');
+                fileLabel.textContent = fileName;
+            });
+        });
+
+        // Open modal on edit click
+        document.querySelectorAll('.edit-book-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.dataset.id;
+                const title = this.dataset.title;
+                const author = this.dataset.author;
+                const description = this.dataset.description;
+                const content = this.dataset.content;
+
+                // Fill form values
+                document.getElementById('edit-book-id').value = id;
+                document.getElementById('edit-title').value = title;
+                document.getElementById('edit-author').value = author;
+                document.getElementById('edit-description').value = description;
+                document.getElementById('edit-content').value = content;
+
+                // Set action URL
+                document.getElementById('editBookForm').action = `/admin/books/update/${id}`;
+
+                // Show modal
+                document.getElementById('editBookModal').style.display = 'block';
+            });
+        });
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('editBookModal').style.display = 'none';
+        }
+    </script>
 </body>
 </html>

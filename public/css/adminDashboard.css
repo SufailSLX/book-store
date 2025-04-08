@@ -310,47 +310,6 @@ body {
     align-items: center;
 }
 
-/* Modal Styles */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
-}
-
-.modal-content {
-    background-color: white;
-    margin: 10% auto;
-    padding: 20px;
-    border-radius: 8px;
-    width: 80%;
-    max-width: 600px;
-    position: relative;
-}
-
-.close-modal {
-    position: absolute;
-    right: 20px;
-    top: 10px;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.status-active {
-    color: #2ecc71;
-    font-weight: bold;
-}
-
-.status-blocked {
-    color: #e74c3c;
-    font-weight: bold;
-}
-
 /* Responsive */
 @media (max-width: 768px) {
     .dashboard {
@@ -385,3 +344,32 @@ body {
         border-bottom: 3px solid var(--primary-color);
     }
 }
+
+.modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    width: 600px;
+    max-width: 90%;
+    position: relative;
+  }
+  
+  .close-button {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  
