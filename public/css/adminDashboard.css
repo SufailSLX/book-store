@@ -373,3 +373,16 @@ body {
     cursor: pointer;
   }
   
+  .user-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+.user-table th, .user-table td {
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+.user-table th {
+    background-color: #f5f5f5;
+}

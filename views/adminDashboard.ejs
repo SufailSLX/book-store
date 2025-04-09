@@ -138,13 +138,44 @@
 
             <!-- Manage Users Section -->
             <div class="content-section" id="manage-users">
-                <!-- ... (keep existing users section code) ... -->
-            </div>
+    <div class="container">
+        <div class="floating-card">
+            <h2>Registered Users</h2>
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% users.forEach(user => { %>
+                        <tr>
+                            <td><%= user.email %></td>
+                            <td style="color: <%= user.isBlocked ? 'red' : 'green' %>">
+                                <%= user.isBlocked ? 'Blocked' : 'Active' %>
+                            </td>
+                            <td>
+                                <!-- <form action="/admin/users/toggle-block/<%= user._id %>" method="POST"> -->
+                                    <form action="/admin/users/toggle-block/<%= user._id %>" method="POST">
 
-            <!-- Manage Admins Section -->
-            <div class="content-section" id="manage-admins">
-                <!-- ... (keep existing admins section code) ... -->
-            </div>
+                                    <button type="submit" class="animated-button"
+                                        style="background-color: <%= user.isBlocked ? '#2ecc71' : '#e74c3c' %>">
+                                        <span class="button-text">
+                                            <%= user.isBlocked ? 'Unblock' : 'Block' %>
+                                        </span>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
         </div>
     </div>
 

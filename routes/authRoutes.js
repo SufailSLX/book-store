@@ -356,6 +356,10 @@ router.post('/login', ensureGuest, async (req, res) => {
             return res.redirect('/login?error=Email not found');
         }
 
+        if (user.isBlocked) {
+            return res.status(403).render("login", { error: "Your account has been blocked." });
+        }
+
         if (!(await bcrypt.compare(password, user.password))) {
             return res.redirect('/login?error=Incorrect password');
         }
