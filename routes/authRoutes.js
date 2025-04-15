@@ -390,42 +390,7 @@ router.get('/logout', (req, res) => {
     });
 });
 
-// router.get('/dashboard', ensureAuth, async (req, res) => {
-//     try {
-//         const books = await Book.find().limit(5); // Fetch books from database
-//         res.render('dashboard', {
-//             user: req.session.user,
-//             books: books // Pass books to the template
-//         });
-//     } catch (error) {
-//         console.error('Dashboard error:', error);
-//         res.render('dashboard', {
-//             user: req.session.user,
-//             books: [] // Fallback empty array if error occurs
-//         });
-//     }
-// });
 
-// router.get('/dashboard', ensureAuth, async (req, res) => {
-//     try {
-//         if (!req.session.user) {
-//             return res.redirect('/login');
-//         }
-
-//         const books = await Book.find().limit(5); // Fetch books from database
-//         res.render('dashboard', {
-//             user: req.session.user,
-//             books: books // Pass books to the template
-//         });
-//     } catch (error) {
-//         console.error('Dashboard error:', error);
-//         res.render('dashboard', {
-//             user: req.session.user,
-//             books: [] // Fallback empty array if error occurs
-//         });
-//     }
-// });
-// Session check endpoint
 router.get('/check-session', (req, res) => {
     res.json({
         authenticated: !!req.session.user,

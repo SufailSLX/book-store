@@ -50,6 +50,17 @@ router.post("/add", verifyToken, async (req, res) => {
     }
 });
 
+// ✅ Get Wishlist Count
+router.get("/count", verifyToken, async (req, res) => {
+    try {
+        const wishlist = await Wishlist.findOne({ userId: req.user.id });
+        const count = wishlist ? wishlist.books.length : 0;
+        res.json({ count });
+    } catch (error) {
+        console.error("Error getting wishlist count:", error);
+        res.status(500).json({ error: "Server Error" });
+    }
+});
 // ✅ Remove Book from Wishlist
 router.delete("/remove/:bookId", verifyToken, async (req, res) => {
     try {

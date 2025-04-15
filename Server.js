@@ -6,7 +6,8 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const passport = require("passport");
-require("./config/passport"); // ✅ Require the passport config file
+require("./config/passport"); 
+
 
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
@@ -52,7 +53,7 @@ app.use('/uploads', express.static('uploads'));
 
 // ✅ Routes
 app.use("/", pageRoutes);
-app.use("/api/auth", authRoutes); // ✅ Google OAuth now works here
+app.use("/api/auth", authRoutes); 
 app.use("/api/users", userRoutes);
 app.use('/admin', adminRoutes);
 app.use("/api/books", bookRoutes);

@@ -18,143 +18,38 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js"></script>
     <style>
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            overflow: auto;
-        }
-
-        .modal-content {
-            background: linear-gradient(135deg, #7a4e2a, #cfa45f);
-            margin: 15% auto;
-            padding: 30px;
-            border-radius: 15px;
-            width: 80%;
-            max-width: 500px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        .wishlist-icon {
             position: relative;
-            animation: modalFadeIn 0.3s;
+            display: inline-block;
         }
-
-        @keyframes modalFadeIn {
-            from {opacity: 0; transform: translateY(-50px);}
-            to {opacity: 1; transform: translateY(0);}
-        }
-
-        .close-modal {
+        .wishlist-count {
             position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 24px;
-            color: #fff;
-            cursor: pointer;
-            transition: color 0.3s;
+            top: -5px;
+            right: -5px;
+            background-color: #ff4757;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-
-        .close-modal:hover {
-            color: #ff0000;
-        }
-
-        /* Wishlist Icon Styles */
-        .add-to-wishlist {
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 24px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .add-to-wishlist:hover {
-            color: #cfa45f;
-        }
-
-        .add-to-wishlist.in-wishlist {
+        .add-to-wishlist.in-wishlist span {
             color: red;
             font-variation-settings: 'FILL' 1;
         }
-
-        .add-to-wishlist.in-wishlist:hover {
-            color: #ff6b6b;
+        .add-to-wishlist span {
+            color: gray;
+            font-variation-settings: 'FILL' 0;
+            transition: all 0.3s ease;
         }
-
-        /* Responsive Adjustments */
-        @media (max-width: 992px) {
-            .intro {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .intro-content {
-                max-width: 100%;
-                margin-bottom: 40px;
-            }
-            
-            .about-container {
-                flex-direction: column;
-            }
-            
-            .about-text {
-                max-width: 100%;
-            }
-            
-            #search-bar {
-                width: 80%;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .navbar {
-                padding: 15px 20px;
-            }
-            
-            .intro-title {
-                font-size: 36px;
-            }
-            
-            .intro-img img {
-                max-width: 100%;
-            }
-            
-            .about-us {
-                margin: 20px;
-            }
-            
-            #book-list {
-                grid-template-columns: 1fr;
-                padding: 20px;
-            }
-            
-            .modal-content {
-                width: 90%;
-                margin: 30% auto;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .intro {
-                padding: 40px 20px;
-            }
-            
-            #search-bar {
-                width: 90%;
-            }
-            
-            .footer-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .modal-content {
-                margin: 40% auto;
-                padding: 20px;
-            }
+        .add-to-wishlist {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
         }
     </style>
 </head>
@@ -165,6 +60,7 @@
         <div class="nav-icons">
             <a href="/api/wishlist" class="wishlist-icon">
                 <span class="material-symbols-outlined">favorite</span>
+                <span id="wishlistCount" class="wishlist-count">0</span>
             </a>
             <span id="logoutButton" class="material-symbols-outlined">logout</span>
         </div>
@@ -245,7 +141,7 @@
                     <div class="book-buttons">
                         <a href="/read/<%= book._id %>" class="read-btn">Click to Read</a>
                         <button class="add-to-wishlist <%= book.inWishlist ? 'in-wishlist' : '' %>" data-book-id="<%= book._id %>">
-                            <span class="material-symbols-outlined">favorite</span>
+                            <span class="material-symbols-outlined" style="color: <%= book.inWishlist ? 'red' : 'gray' %>; font-variation-settings: 'FILL' <%= book.inWishlist ? 1 : 0 %>">favorite</span>
                         </button>
                     </div>
                 </div>
@@ -310,6 +206,17 @@
         const booksPerPage = 3;
         let filteredBooks = [...allBooks];
 
+        // Function to update wishlist count
+        async function updateWishlistCount() {
+            try {
+                const response = await fetch('/api/wishlist/count');
+                const data = await response.json();
+                document.getElementById('wishlistCount').textContent = data.count;
+            } catch (error) {
+                console.error('Error updating wishlist count:', error);
+            }
+        }
+
         // Check if book is in wishlist
         async function checkWishlistStatus(bookId) {
             try {
@@ -342,7 +249,7 @@
                             <div class="book-buttons">
                                 <a href="/read/${book._id}" class="read-btn">Click to Read</a>
                                 <button class="add-to-wishlist ${inWishlist ? 'in-wishlist' : ''}" data-book-id="${book._id}">
-                                    <span class="material-symbols-outlined">favorite</span>
+                                    <span class="material-symbols-outlined" style="color: ${inWishlist ? 'red' : 'gray'}; font-variation-settings: 'FILL' ${inWishlist ? 1 : 0}">favorite</span>
                                 </button>
                             </div>
                         </div>
@@ -385,6 +292,7 @@
                 button.addEventListener("click", async (event) => {
                     const bookId = event.currentTarget.getAttribute("data-book-id");
                     const isInWishlist = button.classList.contains('in-wishlist');
+                    const icon = button.querySelector('span');
                     
                     try {
                         const endpoint = isInWishlist ? "/api/wishlist/remove" : "/api/wishlist/add";
@@ -397,13 +305,20 @@
                         
                         if (data.success) {
                             button.classList.toggle('in-wishlist');
+                            if (button.classList.contains('in-wishlist')) {
+                                icon.style.color = 'red';
+                                icon.style.fontVariationSettings = "'FILL' 1";
+                            } else {
+                                icon.style.color = 'gray';
+                                icon.style.fontVariationSettings = "'FILL' 0";
+                            }
+                            updateWishlistCount();
                             showToast(isInWishlist ? "Book removed from wishlist!" : "Book added to wishlist!");
                         } else {
                             showToast("Error: " + data.error, true);
                         }
                     } catch (error) {
                         console.error("Error updating wishlist:", error);
-                        // showToast("An error occurred", true);
                     }
                 });
             });
@@ -487,8 +402,9 @@
             history.pushState(null, document.title, location.href);
         });
 
-        // Initial render
+        // Initial render and count update
         renderBooks();
+        updateWishlistCount();
     </script>
     <script src="/js/gsap.js"></script>
 </body>
